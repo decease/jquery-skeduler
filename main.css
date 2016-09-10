@@ -1,0 +1,117 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  font-family: Helvetica, ​Arial, ​sans-serif;
+
+  margin: 50px 0 0 100px;
+  width: 1400px;
+  height: 700px;
+  border: 1px solid chocolate;
+}
+
+.specialists-list {
+  display: flex;
+  flex-direction: row;
+  margin-left: 54px;
+}
+
+.specialists-list > div {
+  flex: 0 0 180px;
+  height: 30px;
+  padding-top: 10px;
+  padding-left: 20px;
+  margin-bottom: 2px;
+  background-color: #F0F0F0;
+}
+
+.specialists-list > div + div {
+  margin-left: 2px;
+}
+
+.schedule {
+  display: flex;
+  flex-direction: row;
+}
+
+.schedule_head {
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule_head div {
+  width: 40px;
+  height: 30px;
+  text-align: left;
+  padding-left: 10px;
+  color: #333333;
+  margin-right: 4px;
+}
+
+.schedule_body {
+  display: flex;
+  flex-direction: row;
+}
+
+.schedule_head div,
+.schedule_body > div > div {
+  background-color: #FFFFFF;
+}
+
+.schedule_head div:nth-child(even),
+.schedule_body > div > div:nth-child(odd) {
+  background-color: #F0F0F0;
+  margin-bottom: 2px;
+}
+
+.schedule_body > div > div {
+  width: 202px;
+  height: 30px;
+}
+
+.schedule_body > div > header {
+  height: 0;
+  position: relative;
+}
+
+.schedule_body > div > header > div {
+  position: absolute;
+  background-color: #576D7C;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 0px .125em .25em rgba(0,0,0,.25);
+  width: 200px;
+  cursor: pointer;
+  color: #FFFFFF;
+}
+
+.schedule_body > div > header > div:hover {
+  transform: translateY(-.15em);
+  box-shadow: 0 .15em 1em rgba(0,0,0,.5);
+}
+
+.schedule_body > div > header > div:active {
+  transform: translateY(-.05em);
+  box-shadow: 0 .15em 1em rgba(0,0,0,.5);
+}
