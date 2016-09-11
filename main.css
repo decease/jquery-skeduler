@@ -1,72 +1,55 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
 
 .container {
   display: flex;
   flex-direction: column;
   overflow: scroll;
   font-family: Helvetica, ​Arial, ​sans-serif;
+  border: 1px solid #B0CEE9;
 
   margin: 50px 0 0 100px;
   width: 1400px;
   height: 700px;
-  border: 1px solid chocolate;
 }
 
 .specialists-list {
   display: flex;
   flex-direction: row;
-  margin-left: 54px;
+  margin-left: 60px;
+  border-left: 1px solid #B0CEE9;
 }
 
 .specialists-list > div {
-  flex: 0 0 180px;
+  flex: 0 0 200px;
   height: 30px;
   padding-top: 10px;
-  padding-left: 20px;
-  margin-bottom: 2px;
-  background-color: #F0F0F0;
+  background-color: #D3E0EF;
+  text-align: center;
 }
 
-.specialists-list > div + div {
-  margin-left: 2px;
+.specialists-list > div + div,
+.schedule_body > div + div > div  {
+  border-left: 1px solid #B0CEE9;
 }
 
 .schedule {
   display: flex;
   flex-direction: row;
+  border-top: 1px solid #B0CEE9;
 }
 
-.schedule_head {
+.schedule_timeline {
   display: flex;
   flex-direction: column;
 }
 
-.schedule_head div {
-  width: 40px;
-  height: 30px;
+.schedule_timeline div {
+  width: 50px;
+  height: 27px;
   text-align: left;
   padding-left: 10px;
+  padding-top: 3px;
   color: #333333;
-  margin-right: 4px;
+  border-right: 1px solid #B0CEE9;
 }
 
 .schedule_body {
@@ -74,19 +57,19 @@ time, mark, audio, video {
   flex-direction: row;
 }
 
-.schedule_head div,
+.schedule_timeline div,
 .schedule_body > div > div {
   background-color: #FFFFFF;
 }
 
-.schedule_head div:nth-child(even),
+.schedule_timeline div:nth-child(even),
 .schedule_body > div > div:nth-child(odd) {
-  background-color: #F0F0F0;
-  margin-bottom: 2px;
+  border-top: 1px dotted #B0CEE9;
+  border-bottom: 1px solid #B0CEE9;
 }
 
 .schedule_body > div > div {
-  width: 202px;
+  width: 200px;
   height: 30px;
 }
 
@@ -98,20 +81,23 @@ time, mark, audio, video {
 .schedule_body > div > header > div {
   position: absolute;
   background-color: #576D7C;
+  /*background-color: #4D7FA8;*/
   padding: 10px;
   box-sizing: border-box;
   box-shadow: 0px .125em .25em rgba(0,0,0,.25);
-  width: 200px;
+  margin-top: 0px;
+  left: 4px;
+  width: 194px;
   cursor: pointer;
   color: #FFFFFF;
 }
 
 .schedule_body > div > header > div:hover {
-  transform: translateY(-.15em);
-  box-shadow: 0 .15em 1em rgba(0,0,0,.5);
+  transform: translateY(-.05em);
+  box-shadow: 0 .25em .5em rgba(0,0,0,.5);
 }
 
 .schedule_body > div > header > div:active {
-  transform: translateY(-.05em);
-  box-shadow: 0 .15em 1em rgba(0,0,0,.5);
+  transform: translateY(-.02em);
+  box-shadow: 0 .15em .1em rgba(0,0,0,.5);
 }
