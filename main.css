@@ -1,7 +1,5 @@
 
 .container {
-  display: flex;
-  flex-direction: column;
   overflow: scroll;
   font-family: Helvetica, ​Arial, ​sans-serif;
   border: 1px solid #B0CEE9;
@@ -23,23 +21,17 @@
   height: 30px;
   padding-top: 10px;
   background-color: #D3E0EF;
+  border-bottom: 1px solid #B0CEE9;
   text-align: center;
 }
 
 .specialists-list > div + div,
-.schedule_body > div + div > div  {
+.schedule_body > div + div > div.cell  {
   border-left: 1px solid #B0CEE9;
 }
 
 .schedule {
   display: flex;
-  flex-direction: row;
-  border-top: 1px solid #B0CEE9;
-}
-
-.schedule_timeline {
-  display: flex;
-  flex-direction: column;
 }
 
 .schedule_timeline div {
@@ -52,36 +44,38 @@
   border-right: 1px solid #B0CEE9;
 }
 
+.schedule_timeline div:first-child {
+    border-top: 1px solid #B0CEE9;
+}
+
 .schedule_body {
   display: flex;
-  flex-direction: row;
 }
 
 .schedule_timeline div,
-.schedule_body > div > div {
+.schedule_body > div > div.cell {
   background-color: #FFFFFF;
 }
 
 .schedule_timeline div:nth-child(even),
-.schedule_body > div > div:nth-child(odd) {
+.schedule_body > div > div.cell:nth-child(odd) {
   border-top: 1px dotted #B0CEE9;
   border-bottom: 1px solid #B0CEE9;
 }
 
-.schedule_body > div > div {
+.schedule_body > div > div.cell {
   width: 200px;
   height: 30px;
 }
 
-.schedule_body > div > header {
+.schedule_body > div > .task_placeholder {
   height: 0;
   position: relative;
 }
 
-.schedule_body > div > header > div {
+.schedule_body > div > .task_placeholder > div {
   position: absolute;
   background-color: #576D7C;
-  /*background-color: #4D7FA8;*/
   padding: 10px;
   box-sizing: border-box;
   box-shadow: 0px .125em .25em rgba(0,0,0,.25);
@@ -92,12 +86,14 @@
   color: #FFFFFF;
 }
 
-.schedule_body > div > header > div:hover {
-  transform: translateY(-.05em);
+.schedule_body > div > .task_placeholder > div:hover {
+  transform: translateY(-.15em);
   box-shadow: 0 .25em .5em rgba(0,0,0,.5);
+  background-color: #3A4852;
+  min-height: 100px;
 }
 
-.schedule_body > div > header > div:active {
+.schedule_body > div > .task_placeholder > div:active {
   transform: translateY(-.02em);
   box-shadow: 0 .15em .1em rgba(0,0,0,.5);
 }
