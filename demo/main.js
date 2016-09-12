@@ -3,7 +3,7 @@ function generate() {
   for (var i = 0; i < 20; i++) {
     var startTime = -1;
     var duration = 0.5;
-    for (var j = 0; j < 20; j++) {
+    for (var j = 0; j < 10; j++) {
       if (Math.random() * 10 > 5) {
         startTime += 0.5 + duration;
       } else {
@@ -25,7 +25,7 @@ function generate() {
         duration: duration,
         column: i,
         id: Math.ceil(Math.random() * 100000),
-        title: 'Стрижка волос ' + i + ' ' + j
+        title: 'Service ' + i + ' ' + j
       };
 
       tasks.push(task);
@@ -35,9 +35,8 @@ function generate() {
   console.log("tasks count: " + tasks.length);
 
   $("#skeduler-container").skeduler({
-    headers: ["Смирнов", "Иванов", "Сидоров", "Игнатов", "Нестеров",  "Орлов", "Табозин", "Гришин", "Арбузов", "Игорев",
-              "Смирнов 2", "Иванов 2", "Сидоров 2", "Игнатов 2", "Нестеров 2",  "Орлов 2", "Табозин 2", "Гришин 2", "Арбузов 2", "Игорев 2"],
+    headers: ["Specialist 1", "Specialist 2", "Specialist 3", "Specialist 4", "Specialist 5",  "Specialist 6", "Specialist 7", "Specialist 8", "Specialist 9", "Specialist 10"],
     tasks: tasks,
-    cardTemplate: '<div>${id}</div><div>${title}</div><div>${title}</div><div>${title}</div><div>${title}</div><div>${title}</div>'
+    cardTemplate: '<div>${id}</div><div>${title}</div>'
   });
 }
