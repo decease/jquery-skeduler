@@ -98,8 +98,10 @@
       console.time('skeduler');
     }
 
-    this.empty();
-    this.addClass(settings.containerCssClass);
+    var skedulerEl = $(this);
+
+    skedulerEl.empty();
+    skedulerEl.addClass(settings.containerCssClass);
 
     var div = $('<div></div>');
 
@@ -108,7 +110,7 @@
     settings.headers.forEach(function(element) {
       div.clone().text(element).appendTo(headerContainer);
     }, this);
-    this.append(headerContainer);
+    skedulerEl.append(headerContainer);
 
     // Add schedule
     var scheduleEl = div.clone().addClass(settings.schedulerContainerCssClass);
@@ -142,12 +144,12 @@
     scheduleEl.append(scheduleTimelineEl);
     scheduleEl.append(scheduleBodyEl);
 
-    this.append(scheduleEl);
+    skedulerEl.append(scheduleEl);
 
     if (settings.debug) {
       console.timeEnd('skeduler');
     }
 
-    return this;
+    return skedulerEl;
   };
 }( jQuery ));
