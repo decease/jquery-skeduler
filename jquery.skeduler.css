@@ -1,5 +1,5 @@
 
-.container {
+.skeduler-container {
   overflow: scroll;
   font-family: Helvetica, ​Arial, ​sans-serif;
   border: 1px solid #B0CEE9;
@@ -9,14 +9,14 @@
   height: 700px;
 }
 
-.specialists-list {
+.skeduler-headers {
   display: flex;
   flex-direction: row;
   margin-left: 60px;
   border-left: 1px solid #B0CEE9;
 }
 
-.specialists-list > div {
+.skeduler-headers > div {
   flex: 0 0 200px;
   height: 30px;
   padding-top: 10px;
@@ -25,16 +25,16 @@
   text-align: center;
 }
 
-.specialists-list > div + div,
-.schedule_body > div + div > div.cell  {
+.skeduler-headers > div + div,
+.skeduler-main-body > div + div > div.skeduler-cell  {
   border-left: 1px solid #B0CEE9;
 }
 
-.schedule {
+.skeduler-main {
   display: flex;
 }
 
-.schedule_timeline div {
+.skeduler-main-timeline div {
   width: 50px;
   height: 27px;
   text-align: left;
@@ -44,36 +44,36 @@
   border-right: 1px solid #B0CEE9;
 }
 
-.schedule_timeline div:first-child {
+.skeduler-main-timeline div:first-child {
     border-top: 1px solid #B0CEE9;
 }
 
-.schedule_body {
+.skeduler-main-body {
   display: flex;
 }
 
-.schedule_timeline div,
-.schedule_body > div > div.cell {
+.skeduler-main-timeline div,
+.skeduler-main-body > div > div.skeduler-cell {
   background-color: #FFFFFF;
 }
 
-.schedule_timeline div:nth-child(even),
-.schedule_body > div > div.cell:nth-child(odd) {
+.skeduler-main-timeline div:nth-child(even),
+.skeduler-main-body > div > div.skeduler-cell:nth-child(odd) {
   border-top: 1px dotted #B0CEE9;
   border-bottom: 1px solid #B0CEE9;
 }
 
-.schedule_body > div > div.cell {
+.skeduler-main-body > div > div.skeduler-cell {
   width: 200px;
   height: 30px;
 }
 
-.schedule_body > div > .task_placeholder {
+.skeduler-main-body > div > .skeduler-task-placeholder {
   height: 0;
   position: relative;
 }
 
-.schedule_body > div > .task_placeholder > div {
+.skeduler-main-body > div > .skeduler-task-placeholder > div {
   position: absolute;
   background-color: #576D7C;
   padding: 10px;
@@ -84,16 +84,18 @@
   width: 194px;
   cursor: pointer;
   color: #FFFFFF;
+  transition: all .3s;
 }
 
-.schedule_body > div > .task_placeholder > div:hover {
+.skeduler-main-body > div > .skeduler-task-placeholder > div:hover {
   transform: translateY(-.15em);
   box-shadow: 0 .25em .5em rgba(0,0,0,.5);
   background-color: #3A4852;
-  min-height: 100px;
+  min-height: 150px;
+  z-index: 9999;
 }
 
-.schedule_body > div > .task_placeholder > div:active {
+.skeduler-main-body > div > .skeduler-task-placeholder > div:active {
   transform: translateY(-.02em);
   box-shadow: 0 .15em .1em rgba(0,0,0,.5);
 }
