@@ -28,6 +28,8 @@
 .skeduler-headers > div + div {
   border-left: 1px solid #B0CEE9;
 }
+
+.skeduler-headers > div:last-child,
 .skeduler-main-body > div > div.skeduler-cell  {
   border-right: 1px solid #B0CEE9;
 }
