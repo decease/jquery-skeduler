@@ -1,8 +1,6 @@
 
 .skeduler-container {
-  overflow: scroll;
   font-family: Helvetica, ​Arial, ​sans-serif;
-  border: 1px solid #B0CEE9;
 }
 
 .skeduler-container * {
@@ -10,10 +8,11 @@
 }
 
 .skeduler-headers {
+  border-left: 1px solid #b0cee9;
+  border-top: 1px solid #b0cee9;
   display: flex;
   flex-direction: row;
-  margin-left: 60px;
-  border-left: 1px solid #B0CEE9;
+  padding-left: 60px;
 }
 
 .skeduler-headers > div {
@@ -25,7 +24,7 @@
   text-align: center;
 }
 
-.skeduler-headers > div + div {
+.skeduler-headers > div {
   border-left: 1px solid #B0CEE9;
 }
 
@@ -50,6 +49,7 @@
   padding-top: 3px;
   color: #333333;
   border-right: 1px solid #B0CEE9;
+  border-left: 1px solid #B0CEE9;
 }
 
 .skeduler-main-timeline div:first-child {
