@@ -1,12 +1,20 @@
 {
-  "name": "calendar",
-  "version": "1.0.0",
-  "description": "",
+  "name": "jquery-skeduler",
+  "version": "0.0.1",
+  "description": "This is jQuery plugin which provider you simple scheduler with some items on OX and 24-hours timeline on OY.",
   "main": "index.js",
   "scripts": {
-    "start": "browser-sync start --server --files \"*.*\""
+    "start": "browser-sync start --server --files \"*.*\"",
+    "minify": "minify jquery.skeduler.js && minify jquery.skeduler.css"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "jQuery",
+    "skeduler",
+    "scheduler"
+  ],
+  "author": "Oleg Mishenkin",
+  "license": "ISC",
+  "devDependencies": {
+    "minifier": "^0.8.0"
+  }
 }
