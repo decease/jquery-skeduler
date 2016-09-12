@@ -25,7 +25,9 @@
   text-align: center;
 }
 
-.skeduler-headers > div + div,
+.skeduler-headers > div + div {
+  border-left: 1px solid #B0CEE9;
+}
 .skeduler-main-body > div > div.skeduler-cell  {
   border-right: 1px solid #B0CEE9;
 }
