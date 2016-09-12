@@ -11,8 +11,6 @@ function generate() {
       }
 
       if (startTime > 23) {
-        console.log(startTime);
-        console.log(duration);
         break;
       }
 

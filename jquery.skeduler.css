@@ -5,6 +5,10 @@
   border: 1px solid #B0CEE9;
 }
 
+.skeduler-container * {
+    box-sizing: content-box;
+}
+
 .skeduler-headers {
   display: flex;
   flex-direction: row;
@@ -22,12 +26,16 @@
 }
 
 .skeduler-headers > div + div,
-.skeduler-main-body > div + div > div.skeduler-cell  {
-  border-left: 1px solid #B0CEE9;
+.skeduler-main-body > div > div.skeduler-cell  {
+  border-right: 1px solid #B0CEE9;
 }
 
 .skeduler-main {
   display: flex;
+}
+
+.skeduler-main-timeline {
+  margin-top: -1px;
 }
 
 .skeduler-main-timeline div {
