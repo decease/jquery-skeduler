@@ -92,11 +92,11 @@
   * - borderWidth - width of border of cell in grid
   */
   $.fn.skeduler = function( options ) {
+    settings = $.extend(defaultSettings, options);
+
     if (settings.debug) {
       console.time('skeduler');
     }
-
-    settings = $.extend(defaultSettings, options);
 
     this.empty();
     this.addClass(settings.containerCssClass);
