@@ -20,7 +20,7 @@ Documentation
 -------------
 ### Basic using
 
-The .skeduler() method can be used to createa skeduler instance.
+The .skeduler() method can be used to create skeduler instance.
   > $('#mySkeduler').skeduler(options);
 
 ### Options description
