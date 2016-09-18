@@ -11,13 +11,15 @@
   border-left: 1px solid #b0cee9;
   display: flex;
   padding-left: 60px;
+  position: relative;
 }
 
 .skeduler-headers:before {
   border-top: 1px solid #b0cee9;
   content: "";
   width: 60px;
-  margin-left: -60px;
+  position: absolute;
+  left: 0;
 }
 
 .skeduler-headers > div {
