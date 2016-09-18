@@ -10,12 +10,18 @@ Demos
 
 The demo live in demo/ directory. Open demo/indes.html directly in your web browser.
 
+Install
+-------
+
+Install by Bower:
+  > bower install jquery-skeduler
+
 Documentation
 -------------
 ### Basic using
 
 The .skeduler() method can be used to createa skeduler instance.
-  $('#mySkeduler').skeduler(options);
+  > $('#mySkeduler').skeduler(options);
 
 ### Options description
 Options contains follow fields:
