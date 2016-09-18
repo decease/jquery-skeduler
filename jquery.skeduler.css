@@ -9,10 +9,15 @@
 
 .skeduler-headers {
   border-left: 1px solid #b0cee9;
-  border-top: 1px solid #b0cee9;
   display: flex;
-  flex-direction: row;
   padding-left: 60px;
+}
+
+.skeduler-headers:before {
+  border-top: 1px solid #b0cee9;
+  content: "";
+  width: 60px;
+  margin-left: -60px;
 }
 
 .skeduler-headers > div {
@@ -20,12 +25,10 @@
   height: 30px;
   padding-top: 10px;
   background-color: #D3E0EF;
-  border-bottom: 1px solid #B0CEE9;
-  text-align: center;
-}
-
-.skeduler-headers > div {
   border-left: 1px solid #B0CEE9;
+  border-bottom: 1px solid #B0CEE9;
+  border-top: 1px solid #b0cee9;
+  text-align: center;
 }
 
 .skeduler-headers > div:last-child,
