@@ -27,7 +27,7 @@
    * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
    */
   function toTimeString(value) {
-    return (value < 10 ? '0' : '') + Math.round(value) + (value % 10 > 0 ? ':30' : ':00');
+    return (value < 10 ? '0' : '') + Math.ceil(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
   }
 
   /**
