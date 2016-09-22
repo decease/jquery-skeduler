@@ -32,9 +32,10 @@ Options contains follow fields:
   * schedulerContainerCssClass: string - css class of scheduler
   * lineHeight - height of one half-hour cell in grid
   * borderWidth - width of border of cell in grid
+  * onClick - function (e, t) {} - where e - native event args and t is object of clicked card
 
 Roadmap
 -------
 * [x] Initialize plugin
-* [ ] Add click event
+* [x] Add click event
 * [ ] Make better documentation
