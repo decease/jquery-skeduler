@@ -9,6 +9,9 @@
       // You're able to use ${key} inside template, where key is any property from task.
       cardTemplate: '<div>${id}</div>',
 
+      // OnClick event handler
+      onClick: function (e, task) {},
+
       // Css classes
       containerCssClass: 'skeduler-container',
       headerContainerCssClass: 'skeduler-headers',
@@ -70,12 +73,13 @@
       var top = getCardTopPosition(task.startTime);
       var height = getCardHeight(task.duration);
 
-      $('<div></div>')
+      var card = $('<div></div>')
         .attr({
           style: 'top: ' + top + 'px; height: ' + height + 'px',
           title: toTimeString(task.startTime) + ' - ' + toTimeString(task.startTime + task.duration)
-        })
-        .append(innerContent)
+        });
+        card.on('click', function (e) { settings.onClick && settings.onClick(e, task) });
+        card.append(innerContent)
         .appendTo(placeholder);
     }, this);
   }
