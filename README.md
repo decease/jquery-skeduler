@@ -8,7 +8,7 @@ scheduler with some items on OX and 24-hours timeline on OY.
 Demos
 -----
 
-The demo live in demo/ directory. Open demo/indes.html directly in your web browser.
+The demo live in demo/ directory. Open demo/index.html directly in your web browser.
 
 Install
 -------
