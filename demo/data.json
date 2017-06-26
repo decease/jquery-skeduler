@@ -1,4 +1,18 @@
 {
+    "items": [
+        {
+            "name": "Ben Johnson",
+            "iterval": { "start": "8:00", "end": "10:00" }
+        },
+        {
+            "name": "John Adams",
+            "iterval": { "start": "10:00", "end": "15:00" }
+        },
+        {
+            "name": "Margaret Smith",
+            "iterval": { "start": "13:00", "end": "14:30" }
+        }
+    ],
     "specialists": [
         {
             "id": 1, 

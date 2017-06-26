@@ -21,7 +21,7 @@
     resizableHandlerCssClass: 'resizable-handler',
     resizableSliderCssClass: 'resizable-slider',
 
-    lineHeight: 30,         // height of one half-hour line in grid
+    lineHeight: 30,         // height of one line in grid
     borderWidth: 1,         // width of board of grid cell
     columnWidth: 200,
     minColumnWidth: 100,
@@ -171,6 +171,68 @@
       }
     });
   }
+
+  $.fn.skedulerItems = function (options) {
+    $skedulerItemsEl = $(this);
+
+    // $skedulerItemsEl.html(`
+    //   <div></div>
+    // `);
+    let operation = null;
+
+    const mouseUp = (event) => {
+      if (operation == null) return;
+
+      const { $movingCard } = operation;
+
+      $movingCard.remove();
+
+      operation = null;
+      ownerDocument.off('mousemove', mouseMove);
+      ownerDocument.off('mouseup', mouseUp);
+    };
+
+    const mouseMove = (event) => {
+      if (operation == null) return;
+
+      const { $movingCard } = operation;
+
+      $movingCard.css({
+          top: (event.clientY - $movingCard.height() / 2) + 'px',
+          left: (event.clientX - $movingCard.width() / 2) + 'px'
+      });
+    };
+
+    const mouseDownOnCard = (event /*: MouseEvent */) => {
+      if (event.which !== 1) { return; }
+
+      const $card = $(event.currentTarget);
+      const duration = parseInt($card.data('duration'));
+      const height = Math.ceil(settings.lineHeight * settings.rowsPerHour / 60 * duration);
+
+      const $movingCard = $card.clone()
+        .addClass('si-card-moving')
+        .appendTo($skedulerItemsEl.parent());
+
+      $movingCard
+        .height(height + 'px')
+        .css({
+          top: (event.clientY - $movingCard.height() / 2) + 'px',
+          left: (event.clientX - $movingCard.width() / 2) + 'px'
+        })
+
+      operation = {
+        $card, $movingCard
+      };
+
+      ownerDocument.on('mousemove', mouseMove);
+      ownerDocument.on('mouseup', mouseUp);
+
+      event.preventDefault();
+    };
+
+    $skedulerItemsEl.find('.si-card').on('mousedown', mouseDownOnCard);
+  };
 
   /**
   * Generate scheduler grid with task cards

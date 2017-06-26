@@ -1,6 +1,7 @@
 $(function () {
   var populate = (data, template) => {
     var headers = data.specialists.map(d => d.name);
+    var items = data.items;
     var tasks = [];
 
     $("#skeduler-container").skeduler({
@@ -10,6 +11,10 @@ $(function () {
       tasks: tasks,
       cardTemplate: template,
       onClick: (e, t) => { console.log(e, t); }
+    });
+
+    $("#skeduler-items").skedulerItems({
+      items: items
     });
   };
 
