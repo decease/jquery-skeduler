@@ -4,6 +4,11 @@
     flex-direction: row;
 }
 
+.header {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 #skeduler-items {
     flex: 20;
     height: 100%;
