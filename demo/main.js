@@ -10,12 +10,13 @@ $(function () {
       headers: headers,
       tasks: tasks,
       cardTemplate: template,
-      onClick: (e, t) => { console.log(e, t); }
+      onClick: (e, t) => { console.log(e, t); },
+      itemsOptions: {
+        enabled: true,
+        containerSelector: "#skeduler-items",
+        items: items
+      }
     });
-
-    // $("#skeduler-items").skedulerItems({
-    //   items: items
-    // });
   };
 
   var templateLoaded = (template) => {

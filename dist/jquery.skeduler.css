@@ -97,3 +97,34 @@
   z-index: 2;
   background-color: transparent;
 }
+/* Skeduler items styles */
+.si-header {
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 1.5em;
+}
+.si-container {
+  position: relative;
+}
+.si-card {
+  cursor: pointer;
+  background-color: #aad8aa;
+  border-radius: 5px;
+  margin: 10px 10px;
+  padding: 5px 20px;
+  user-select: none;
+}
+.si-card-moving {
+  position: absolute;
+  opacity: 0.7;
+  box-shadow: 2px 2px 10px #aad8aa;
+}
+.si-card h2,
+.si-card p {
+  margin: 5px 0;
+}
+.si-card h2 {
+  font-family: sans-serif;
+  font-size: 1.2em;
+  color: #030303;
+}

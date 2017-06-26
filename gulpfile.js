@@ -31,7 +31,7 @@ const UGLIFY_OPTIONS = {
 const LESS_OPTIONS = {};
 
 // JS Compilation
-gulp.task("build", function () {
+gulp.task("build:js", function () {
 	// Bundle using Browserify + Babel transform
 	return browserify(BROWSERIFY_OPTIONS)
 		.transform(babelify)
@@ -68,25 +68,19 @@ gulp.task("less", function () {
 		.pipe(gulp.dest("dist"));
 });
 
-// Watch tasks
-gulp.task('build:watch', function () {
-
-});
-gulp.task('less:watch', function () {
-
-});
-
 // Serve
 gulp.task('serve', function () {
 	browserSync.init({
 		server: "./"
 	});
 
+	gulp.watch('src/**/*.js', ['build:js'])
+	gulp.watch('less/**/*.less', ['less'])
+
 	gulp.watch('demo/*.*').on('change', browserSync.reload);
-	gulp.watch('src/**/*.js', ['build']).on('change', browserSync.reload);
-	gulp.watch('less/**/*.less', ['less']).on('change', browserSync.reload);
+	gulp.watch('dist/*.*').on('change', browserSync.reload);
 });
 
 // Aliases
 gulp.task('default', ['serve']);
-gulp.task('build', ['build', 'less']);
+gulp.task('build', ['build:js', 'less']);

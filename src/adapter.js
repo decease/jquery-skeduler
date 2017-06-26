@@ -35,3 +35,5 @@ $.fn.skeduler = function (options) {
         var skeduler = new Skeduler($container, options);
     });
 };
+
+$.skeduler = Skeduler;
