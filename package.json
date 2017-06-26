@@ -2,10 +2,10 @@
   "name": "jquery-skeduler",
   "version": "0.0.1",
   "description": "This is jQuery plugin which provider you simple scheduler with some items on OX and 24-hours timeline on OY.",
-  "main": "index.js",
+  "main": "dist/jquery.skeduler.js",
   "scripts": {
-    "start": "browser-sync start --server --files \"*.*\"",
-    "minify": "minify jquery.skeduler.js && minify jquery.skeduler.css"
+    "build": "npm install && gulp",
+    "start": "gulp"
   },
   "keywords": [
     "jQuery",
@@ -15,6 +15,19 @@
   "author": "Oleg Mishenkin",
   "license": "ISC",
   "devDependencies": {
-    "minifier": "^0.8.0"
+    "babel-cli": "^6.24.1",
+    "babelify": "^6.1.0",
+    "browser-sync": "^2.18.12",
+    "browserify": "^10.2.0",
+    "gulp": "^3.8.11",
+    "gulp-babel": "^5.1.0",
+    "gulp-header": "^1.2.2",
+    "gulp-less": "^3.0.3",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.4",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }

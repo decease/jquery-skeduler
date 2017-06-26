@@ -13,16 +13,16 @@ $(function () {
       onClick: (e, t) => { console.log(e, t); }
     });
 
-    $("#skeduler-items").skedulerItems({
-      items: items
-    });
+    // $("#skeduler-items").skedulerItems({
+    //   items: items
+    // });
   };
 
   var templateLoaded = (template) => {
-    $.getJSON('data.json', (data) => {
+    $.getJSON('demo/data.json', (data) => {
       populate(data, template);
     });
   };
 
-  $.get('card-template.html', templateLoaded);
+  $.get('demo/card-template.html', templateLoaded);
 });

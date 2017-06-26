@@ -1,0 +1,99 @@
+.skeduler-container {
+  font-family: Helvetica, Arial, sans-serif;
+}
+.skeduler-container * {
+  box-sizing: content-box;
+}
+.skeduler-headers {
+  border-left: 1px solid #b0cee9;
+  display: flex;
+  padding-left: 60px;
+  position: relative;
+}
+.skeduler-headers:before {
+  border-top: 1px solid #b0cee9;
+  content: "";
+  width: 60px;
+  position: absolute;
+  left: 0;
+}
+.skeduler-headers > div {
+  flex: 0 0;
+  height: 30px;
+  padding-top: 10px;
+  background-color: #D3E0EF;
+  border-left: 1px solid #B0CEE9;
+  border-bottom: 1px solid #B0CEE9;
+  border-top: 1px solid #b0cee9;
+  text-align: center;
+}
+.skeduler-headers > div:last-child,
+.skeduler-main-body > div > div.skeduler-cell {
+  border-right: 1px solid #B0CEE9;
+}
+.skeduler-main {
+  display: flex;
+}
+.skeduler-main-timeline {
+  margin-top: -1px;
+}
+.skeduler-main-timeline div {
+  width: 60px;
+  text-align: center;
+  color: #333333;
+  border-right: 1px solid #B0CEE9;
+  border-left: 1px solid #B0CEE9;
+}
+.skeduler-main-timeline div:first-child {
+  border-top: 1px solid #B0CEE9;
+}
+.skeduler-main-body {
+  display: flex;
+}
+.skeduler-main-timeline div,
+.skeduler-main-body > div > div.skeduler-cell {
+  background-color: #FFFFFF;
+}
+.skeduler-main-timeline div,
+.skeduler-main-body > div > div.skeduler-cell {
+  border-bottom: 1px dotted #B0CEE9;
+}
+.skeduler-main-timeline div.last,
+.skeduler-main-body > div > div.skeduler-cell.last {
+  border-bottom: 1px solid #B0CEE9;
+}
+.skeduler-main-body > div > .skeduler-task-placeholder {
+  height: 0;
+  position: relative;
+}
+.skeduler-main-body > div > .skeduler-task-placeholder > div {
+  position: absolute;
+  overflow: hidden;
+  background-color: #576D7C;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 0px 0.125em 0.25em rgba(0, 0, 0, 0.25);
+  margin-top: 0px;
+  left: 4px;
+  width: 194px;
+  cursor: pointer;
+  color: #FFFFFF;
+  transition: all .3s;
+}
+.skeduler-main-body > div > .skeduler-task-placeholder > div:hover {
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.5);
+  background-color: #3A4852;
+  min-height: 150px;
+  z-index: 9999;
+}
+.resizable-handler {
+  position: relative;
+}
+.resizable-slider {
+  position: absolute;
+  width: 7px;
+  cursor: ew-resize;
+  margin-left: -3px;
+  z-index: 2;
+  background-color: transparent;
+}
