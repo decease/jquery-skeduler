@@ -133,7 +133,7 @@ class Skeduler {
             const { $movingCard } = operation;
 
             $movingCard.css({
-                top: (event.clientY + 10) + 'px',
+                top: (event.clientY - 30) + 'px',
                 left: (event.clientX - 50) + 'px'
             });
         };
@@ -152,7 +152,7 @@ class Skeduler {
             $movingCard
                 .height(height + 'px')
                 .css({
-                    top: (event.clientY + 10) + 'px',
+                    top: (event.clientY - 30) + 'px',
                     left: (event.clientX - 50) + 'px'
                 })
 
