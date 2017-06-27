@@ -27,19 +27,23 @@ class Skeduler {
         this.$container.empty();
         this.$container.addClass(this.settings.containerCssClass);
 
-        var div = $('<div></div>');
+        const headers = this.settings.headers 
+            ? this.settings.headers
+            : this.settings.data.map(this.settings.getHeader);
+
+        const div = $('<div></div>');
 
         // Add headers
         this.$headerContainer = div.clone().addClass(this.settings.headerContainerCssClass);
         console.log('this.$headerContainer', this.$headerContainer);
-        this.settings.headers.forEach((element) => {
+        headers.forEach((element) => {
             div.clone()
                 .text(element)
                 .appendTo(this.$headerContainer);
         }, this);
         this.$container.append(this.$headerContainer);
 
-        // Add schedule
+        // Add scheduler
         this.$scheduleEl = div.clone().addClass(this.settings.schedulerContainerCssClass);
         var scheduleTimelineEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-timeline');
         var scheduleBodyEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-body');
@@ -69,13 +73,19 @@ class Skeduler {
         }
 
         // Populate grid
-        for (var j = 0; j < this.settings.headers.length; j++) {
+        for (var j = 0; j < headers.length; j++) {
             var el = gridColumnElement.clone();
 
-            var placeholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
-            this.appendTasks(placeholder, this.settings.tasks.filter(t => t.column == j ));
+            var tasksPlaceholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
+            this.appendTasks(tasksPlaceholder, this.settings.tasks.filter(t => t.column == j ));
 
-            el.prepend(placeholder);
+            // fixme
+            var workingIntervalsPlaceholder = div.clone().addClass(this.settings.workingIntervalPlaceholderCssClass);
+            var intervals = this.settings.data.find(d => d.id === j + 1).workingTimeIntervals;
+            this.appendAvailableInterval(workingIntervalsPlaceholder, intervals);
+
+            el.prepend(tasksPlaceholder);
+            el.prepend(workingIntervalsPlaceholder);
             el.appendTo(scheduleBodyEl);
 
             this.updateColumnWidth(j, this.settings.columnWidth);
@@ -87,30 +97,13 @@ class Skeduler {
         this.$container.append(this.$scheduleEl);
 
         // Set default width for columns
-        for (var j = 0; j < this.settings.headers.length; j++) {
+        for (var j = 0; j < headers.length; j++) {
             this.updateColumnWidth(j, this.settings.columnWidth);
         }
 
+        // Configure resizing
         if (this.settings.columnResizeEnabled) {
-            var skedulerElResizableHandler = div.clone()
-                .addClass(this.settings.resizableHandlerCssClass);
-
-            this.$container.prepend(skedulerElResizableHandler);
-
-            skedulerElResizableHandler.width(this.$container.width());
-
-            var resizableSliderHeight = this.$scheduleEl.height() + this.$headerContainer.height();
-            var index = 0;
-            this.$headerContainer.find('div').each((_, el) => {
-                div.clone()
-                    .addClass(this.settings.resizableSliderCssClass)
-                    .css('left', el.offsetLeft + el.clientWidth)
-                    .height(resizableSliderHeight)
-                    .data('column-id', index++)
-                    .appendTo(skedulerElResizableHandler)
-            });
-
-            skedulerElResizableHandler.on('mousedown', '.' + this.settings.resizableSliderCssClass, this.onPointerDown.bind(this));
+            this.configureResizing();
         }
     }
 
@@ -140,7 +133,7 @@ class Skeduler {
             const { $movingCard } = operation;
 
             $movingCard.css({
-                top: (event.clientY - 50) + 'px',
+                top: (event.clientY + 10) + 'px',
                 left: (event.clientX - 50) + 'px'
             });
         };
@@ -159,7 +152,7 @@ class Skeduler {
             $movingCard
                 .height(height + 'px')
                 .css({
-                    top: (event.clientY - 50) + 'px',
+                    top: (event.clientY + 10) + 'px',
                     left: (event.clientX - 50) + 'px'
                 })
 
@@ -176,6 +169,30 @@ class Skeduler {
         $skedulerItemsEl.find('.si-card').on('mousedown', mouseDownOnCard);
     }
 
+    configureResizing() {
+        const div = $('<div></div>');
+
+        const skedulerElResizableHandler = div.clone()
+            .addClass(this.settings.resizableHandlerCssClass);
+
+        this.$container.prepend(skedulerElResizableHandler);
+
+        skedulerElResizableHandler.width(this.$container.width());
+
+        const resizableSliderHeight = this.$scheduleEl.height() + this.$headerContainer.height();
+        let index = 0;
+        this.$headerContainer.find('div').each((_, el) => {
+            div.clone()
+                .addClass(this.settings.resizableSliderCssClass)
+                .css('left', el.offsetLeft + el.clientWidth)
+                .height(resizableSliderHeight)
+                .data('column-id', index++)
+                .appendTo(skedulerElResizableHandler)
+        });
+
+        skedulerElResizableHandler.on('mousedown', '.' + this.settings.resizableSliderCssClass, this.onPointerDown.bind(this));
+    }
+
     /**
        * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
        */
@@ -188,7 +205,9 @@ class Skeduler {
      * duration - in hours
      */
     getCardHeight(duration) {
-        return (this.settings.lineHeight + this.settings.borderWidth) * (duration * this.settings.rowsPerHour) - 1;
+        const durationInMinutes = duration * 60;
+        const heightOfMinute = (this.settings.lineHeight + this.settings.borderWidth) * this.settings.rowsPerHour / 60;
+        return Math.ceil(durationInMinutes * heightOfMinute);
     }
 
     /**
@@ -196,7 +215,14 @@ class Skeduler {
      * startTime - in hours
      */
     getCardTopPosition(startTime) {
-        return (this.settings.lineHeight + this.settings.borderWidth) * (startTime * this.settings.rowsPerHour);
+        const startTimeInt = this.parseTime(startTime);
+        return (this.settings.lineHeight + this.settings.borderWidth) * (startTimeInt * this.settings.rowsPerHour);
+    }
+
+    parseTime(time) {
+        return /\d{2}\:\d{2}/.test(time)
+            ? parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60
+            : parseInt(time);
     }
 
     /**
@@ -229,6 +255,24 @@ class Skeduler {
                     title: this.toTimeString(task.startTime) + ' - ' + this.toTimeString(task.startTime + task.duration)
                 });
             card.on('click', (e) => { this.settings.onClick && this.settings.onClick(e, task) });
+            card.append(innerContent)
+                .appendTo(placeholder);
+        }, this);
+    }
+
+    appendAvailableInterval(placeholder, intervals) {
+        const div = $('<div></div>');
+        intervals.forEach((interval) => {
+            const innerContent = div.clone().text('Not allocated');
+            const top = this.getCardTopPosition(interval.start) + 2;
+            const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
+            const height = this.getCardHeight(duration) - 5;
+
+            const card = div.clone()
+                .attr({
+                    style: 'top: ' + top + 'px; height: ' + height + 'px'
+                });
+            
             card.append(innerContent)
                 .appendTo(placeholder);
         }, this);

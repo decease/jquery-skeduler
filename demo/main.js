@@ -1,20 +1,17 @@
 $(function () {
   var populate = (data, template) => {
-    var headers = data.specialists.map(d => d.name);
-    var items = data.items;
-    var tasks = [];
-
     $("#skeduler-container").skeduler({
-      rowsPerHour: 4,
-      lineHeight: 40,
-      headers: headers,
-      tasks: tasks,
+      rowsPerHour: 2,
+      lineHeight: 20,
+      getHeader: item => item.name,
+      data: data.specialists,
+      tasks: data.tasks,
       cardTemplate: template,
       onClick: (e, t) => { console.log(e, t); },
       itemsOptions: {
         enabled: true,
         containerSelector: "#skeduler-items",
-        items: items
+        items: data.items
       }
     });
   };

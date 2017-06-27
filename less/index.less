@@ -76,6 +76,7 @@
   border-bottom: 1px solid #B0CEE9;
 }
 
+.skeduler-main-body > div > .skeduler-interval-placeholder,
 .skeduler-main-body > div > .skeduler-task-placeholder {
   height: 0;
   position: relative;
@@ -101,6 +102,21 @@
   background-color: #3A4852;
   min-height: 150px;
   z-index: 9999;
+}
+
+.skeduler-main-body > div > .skeduler-interval-placeholder > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+  overflow: hidden;
+  background-color: #EAEAEA;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin: 0px 3px;
+  color: #000000;
 }
 
 .resizable-handler {

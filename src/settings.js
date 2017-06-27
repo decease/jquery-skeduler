@@ -1,6 +1,6 @@
 const defaultSettings = {
     // Data attributes
-    headers: [],  // String[] - Array of column headers
+    headers: null,  // String[] - Array of column headers
     tasks: [],    // Task[] - Array of tasks. Required fields: 
     // id: number, startTime: number, duration: number, column: number
 
@@ -16,6 +16,7 @@ const defaultSettings = {
     headerContainerCssClass: 'skeduler-headers',
     schedulerContainerCssClass: 'skeduler-main',
     taskPlaceholderCssClass: 'skeduler-task-placeholder',
+    workingIntervalPlaceholderCssClass: 'skeduler-interval-placeholder',
     cellCssClass: 'skeduler-cell',
     resizableHandlerCssClass: 'resizable-handler',
     resizableSliderCssClass: 'resizable-slider',
