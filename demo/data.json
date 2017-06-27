@@ -13,6 +13,9 @@
             "iterval": { "start": "13:00", "end": "14:30" }
         }
     ],
+    "tasks": [
+
+    ],
     "specialists": [
         {
             "id": 1, 
