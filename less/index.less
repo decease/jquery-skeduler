@@ -117,6 +117,7 @@
   border-radius: 5px;
   margin: 0px 3px;
   color: #000000;
+  opacity: 0.7;
 }
 
 .resizable-handler {
@@ -145,7 +146,8 @@
 }
 
 .si-card {
-    cursor: pointer;
+    position: relative;
+    cursor: move;
     background-color: #aad8aa;
     border-radius: 5px;
     margin: 10px 10px;
@@ -154,9 +156,16 @@
 }
 
 .si-card-moving {
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.si-highlight {
     position: absolute;
-    opacity: 0.7;
-    box-shadow: 2px 2px 10px #aad8aa;
+    left: 0;
+    right: 0;
+    background: #bce8f1;
+    opacity: .3;
 }
 
 .si-card h2, .si-card p {

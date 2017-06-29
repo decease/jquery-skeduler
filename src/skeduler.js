@@ -110,6 +110,7 @@ class Skeduler {
     populateSkedulerItems(options) {
         const $skedulerItemsEl = $(options.containerSelector);
 
+        // TODO: Generate item's divs
         // $skedulerItemsEl.html(`
         //   <div></div>
         // `);
@@ -118,50 +119,69 @@ class Skeduler {
         const mouseUp = (event) => {
             if (operation == null) return;
 
-            const { $movingCard } = operation;
+            const { $card } = operation;
 
-            $movingCard.remove();
+            $card
+                .css({top: 0, left: 0})
+                .removeClass('si-card-moving');
 
             operation = null;
             this.$ownerDocument.off('mousemove', mouseMove);
             this.$ownerDocument.off('mouseup', mouseUp);
+
+            $('.skeduler-cell').off('mousemove', cellMouseMove);
+            $('.skeduler-cell').off('mouseout', cellMouseOut);
         };
 
         const mouseMove = (event) => {
             if (operation == null) return;
 
-            const { $movingCard } = operation;
+            const { $card, oldX, oldY } = operation;
+            const diffX = oldX - event.clientX;
+            const diffY = oldY - event.clientY;
 
-            $movingCard.css({
-                top: (event.clientY + 10) + 'px',
-                left: (event.clientX - 50) + 'px'
+            operation.offsetX -= diffX;
+            operation.offsetY -= diffY;
+
+            console.log(operation);
+
+             $card.css({
+                top:  operation.offsetY + 'px',
+                left: operation.offsetX + 'px'
             });
+
+            operation.oldX = event.clientX;
+            operation.oldY = event.clientY;
+        };
+
+        const cellMouseMove = (event) => {
+            const $cell = $(event.currentTarget);
+            $cell.css('background-color', 'red');
+        };
+
+        const cellMouseOut = (event) => {
+            const $cell = $(event.currentTarget);
+            $cell.css('background-color', 'white');
         };
 
         const mouseDownOnCard = (event /*: MouseEvent */) => {
             if (event.which !== 1) { return; }
 
             const $card = $(event.currentTarget);
-            const duration = parseInt($card.data('duration'));
-            const height = Math.ceil(this.settings.lineHeight * this.settings.rowsPerHour / 60 * duration);
 
-            const $movingCard = $card.clone()
-                .addClass('si-card-moving')
-                .appendTo($skedulerItemsEl.parent());
-
-            $movingCard
-                .height(height + 'px')
-                .css({
-                    top: (event.clientY + 10) + 'px',
-                    left: (event.clientX - 50) + 'px'
-                })
+            $card.addClass('si-card-moving');
 
             operation = {
-                $card, $movingCard
+                oldX: event.clientX, oldY: event.clientY,
+                offsetX: 0, offsetY: 0,
+                $card
             };
 
             this.$ownerDocument.on('mousemove', mouseMove);
             this.$ownerDocument.on('mouseup', mouseUp);
+
+            $('.skeduler-cell').on('mousemove', cellMouseMove);
+            $('.skeduler-cell').on('mouseout', cellMouseOut);
 
             event.preventDefault();
         };
