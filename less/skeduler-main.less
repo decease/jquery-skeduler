@@ -1,25 +1,30 @@
 .skeduler-wrapper {
-  display: flex;
-  flex: 1;
-  flex-direction: row;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
 }
+
 .skeduler-container {
-  margin-left: 400px;
-  flex: 8;
-  overflow-x: scroll;
+    margin-left: 400px;
+    flex: 8;
+    overflow-x: scroll;
 }
+
 .skeduler-container {
   font-family: Helvetica, Arial, sans-serif;
 }
+
 .skeduler-container * {
-  box-sizing: content-box;
+    box-sizing: content-box;
 }
+
 .skeduler-headers {
   border-left: 1px solid #b0cee9;
   display: flex;
   padding-left: 60px;
   position: relative;
 }
+
 .skeduler-headers:before {
   border-top: 1px solid #b0cee9;
   content: "";
@@ -27,6 +32,7 @@
   position: absolute;
   left: 0;
 }
+
 .skeduler-headers > div {
   flex: 0 0;
   height: 30px;
@@ -37,16 +43,20 @@
   border-top: 1px solid #b0cee9;
   text-align: center;
 }
+
 .skeduler-headers > div:last-child,
-.skeduler-main-body > div > div.skeduler-cell {
+.skeduler-main-body > div > div.skeduler-cell  {
   border-right: 1px solid #B0CEE9;
 }
+
 .skeduler-main {
   display: flex;
 }
+
 .skeduler-main-timeline {
   margin-top: -1px;
 }
+
 .skeduler-main-timeline div {
   width: 60px;
   text-align: center;
@@ -54,36 +64,43 @@
   border-right: 1px solid #B0CEE9;
   border-left: 1px solid #B0CEE9;
 }
+
 .skeduler-main-timeline div:first-child {
-  border-top: 1px solid #B0CEE9;
+    border-top: 1px solid #B0CEE9;
 }
+
 .skeduler-main-body {
   display: flex;
 }
+
 .skeduler-main-timeline div,
 .skeduler-main-body > div > div.skeduler-cell {
   background-color: #FFFFFF;
 }
+
 .skeduler-main-timeline div,
 .skeduler-main-body > div > div.skeduler-cell {
   border-bottom: 1px dotted #B0CEE9;
 }
+
 .skeduler-main-timeline div.last,
 .skeduler-main-body > div > div.skeduler-cell.last {
   border-bottom: 1px solid #B0CEE9;
 }
+
 .skeduler-main-body > div > .skeduler-interval-placeholder,
 .skeduler-main-body > div > .skeduler-task-placeholder {
   height: 0;
   position: relative;
 }
+
 .skeduler-main-body > div > .skeduler-task-placeholder > div {
   position: absolute;
   overflow: hidden;
   background-color: #576D7C;
   padding: 10px;
   box-sizing: border-box;
-  box-shadow: 0px 0.125em 0.25em rgba(0, 0, 0, 0.25);
+  box-shadow: 0px .125em .25em rgba(0,0,0,.25);
   margin-top: 0px;
   left: 4px;
   width: 194px;
@@ -91,86 +108,40 @@
   color: #FFFFFF;
   transition: all .3s;
 }
+
 .skeduler-main-body > div > .skeduler-task-placeholder > div:hover {
-  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.5);
+  box-shadow: 0 .25em .5em rgba(0,0,0,.5);
   background-color: #3A4852;
   min-height: 150px;
   z-index: 800;
 }
+
 .skeduler-main-body > div > .skeduler-interval-placeholder > div {
   display: flex;
   justify-content: center;
   align-items: center;
+
   position: relative;
   z-index: 100;
   overflow: hidden;
-  background-color: rgba(234, 234, 234, 0.75);
+  background-color: rgba(234, 234, 234, 0.75);;
   padding: 10px;
   box-sizing: border-box;
+  // border-radius: 3px;
   margin: 0px 3px;
   color: #000000;
 }
+
 .resizable-handler {
   position: relative;
 }
+
 .resizable-slider {
   position: absolute;
   width: 7px;
   cursor: ew-resize;
   margin-left: -3px;
   z-index: 2;
+
   background-color: transparent;
-}
-/* Skeduler items styles */
-.skeduler-items {
-  flex: 2;
-  align-self: stretch;
-  height: 100%;
-  background-color: #e8e8e8;
-  position: fixed;
-  z-index: 300;
-  width: 400px;
-}
-.si-header {
-  text-align: center;
-  font-family: sans-serif;
-  font-size: 1.5em;
-}
-.si-container {
-  position: relative;
-}
-.si-card {
-  cursor: move;
-  background-color: #aad8aa;
-  margin: 10px 10px;
-  padding: 5px 20px;
-  user-select: none;
-}
-.si-card-moving {
-  position: absolute;
-  z-index: 999;
-  opacity: 0.75;
-}
-.si-card-pinned {
-  position: absolute;
-  left: 0;
-  right: 0;
-  box-sizing: border-box;
-  margin: 0;
-}
-.si-highlight-item {
-  background: #bce8f1;
-  opacity: .3;
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-.si-card h2,
-.si-card p {
-  margin: 5px 0;
-}
-.si-card h2 {
-  font-family: sans-serif;
-  font-size: 1.2em;
-  color: #030303;
 }

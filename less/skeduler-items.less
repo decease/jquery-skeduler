@@ -1,0 +1,61 @@
+/* Skeduler items styles */
+.skeduler-items {
+    flex: 2;
+    align-self: stretch;
+    height: 100%;
+    background-color: #e8e8e8;
+    position: fixed;
+    z-index: 300;
+    width: 400px;
+}
+
+.si-header {
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 1.5em;
+}
+
+.si-container {
+    position: relative;
+}
+
+.si-card {
+    cursor: move;
+    background-color: #aad8aa;
+    // border-radius: 5px;
+    margin: 10px 10px;
+    padding: 5px 20px;
+    user-select: none;
+}
+
+.si-card-moving {
+    position: absolute;
+    z-index: 999;
+    opacity: 0.75;
+}
+
+.si-card-pinned {
+  position: absolute;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.si-highlight-item {
+    background: #bce8f1;
+    opacity: .3;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.si-card h2, .si-card p {
+    margin: 5px 0;
+}
+
+.si-card h2 {
+    font-family: sans-serif;
+    font-size: 1.2em;
+    color: #030303;
+}
