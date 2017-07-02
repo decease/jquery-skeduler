@@ -27,7 +27,7 @@ class Skeduler {
         this.$container.empty();
         this.$container.addClass(this.settings.containerCssClass);
 
-        const headers = this.settings.headers 
+        const headers = this.settings.headers
             ? this.settings.headers
             : this.settings.data.map(this.settings.getHeader);
 
@@ -77,7 +77,7 @@ class Skeduler {
             var el = gridColumnElement.clone();
 
             var tasksPlaceholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
-            this.appendTasks(tasksPlaceholder, this.settings.tasks.filter(t => t.column == j ));
+            this.appendTasks(tasksPlaceholder, this.settings.tasks.filter(t => t.column == j));
 
             // fixme
             var workingIntervalsPlaceholder = div.clone().addClass(this.settings.workingIntervalPlaceholderCssClass);
@@ -108,8 +108,11 @@ class Skeduler {
     }
 
     populateSkedulerItems(options) {
-        const $skedulerItemsEl = $(options.containerSelector);
+        const $skedulerItemsEl = $(options.containerSelector)
+            .addClass(this.settings.itemsCssClass);
+        const $shifts = $('.skeduler-interval-placeholder > div');
 
+        // TODO: Generate item's divs
         // $skedulerItemsEl.html(`
         //   <div></div>
         // `);
@@ -118,9 +121,27 @@ class Skeduler {
         const mouseUp = (event) => {
             if (operation == null) return;
 
-            const { $movingCard } = operation;
+            const { $movingCard, $card } = operation;
 
-            $movingCard.remove();
+            const siEl = $('.si-highlight-item:visible'); // fixme
+
+            if (siEl.length !== 0) {
+                $movingCard
+                    .detach()
+                    .css({ top: siEl[0].offsetTop, left: 0 })
+                    .height(siEl[0].clientHeight)
+                    .width('auto')
+                    .removeClass('si-card-moving')
+                    .addClass('si-card-pinned')
+                    .appendTo(siEl.parent());
+
+                $movingCard.on('mousedown', mouseDownOnCard);
+
+                $('.si-highlight-item').hide();
+            } else {
+                $movingCard.remove();
+                $card.show();
+            }
 
             operation = null;
             this.$ownerDocument.off('mousemove', mouseMove);
@@ -132,33 +153,74 @@ class Skeduler {
 
             const { $movingCard } = operation;
 
+            const offsetX = event.pageX,
+                  offsetY = event.pageY;
+
             $movingCard.css({
-                top: (event.clientY - 30) + 'px',
-                left: (event.clientX - 50) + 'px'
+                top: offsetY + 'px',
+                left: offsetX + 'px'
+            });
+
+            // Higlight shifts
+            const _window = this.$ownerDocument[0].defaultView;
+            const x = event.pageX;
+            const y = event.pageY - _window.scrollY;
+
+            const rowHeight = this.settings.lineHeight + 1;
+            const rowsPerHour = this.settings.rowsPerHour;
+            const height = parseInt($movingCard.data('duration')) * (rowHeight * rowsPerHour / 60);
+
+            $shifts.each(function () {
+                const $this = $(this);
+                const elementBounding = this.getBoundingClientRect();
+                if (x > elementBounding.left && x < elementBounding.right
+                    && y > elementBounding.top && y < elementBounding.bottom
+                    && this.clientHeight >= height) {
+                    const offsetTop = y - elementBounding.top;
+                    const top = Math.min(
+                        Math.max(0, (Math.floor(offsetTop / rowHeight) - 1) * rowHeight),
+                        this.clientHeight - height
+                    );
+
+                    $this
+                        .find('.si-highlight-item')
+                        .css({ top: top })
+                        .height(height)
+                        .show();
+                } else {
+                    $this.find('.si-highlight-item').hide();
+                }
             });
         };
 
         const mouseDownOnCard = (event /*: MouseEvent */) => {
             if (event.which !== 1) { return; }
 
+            const $skedulerWrapper = $(`.${this.settings.skedulerWrapperCssClass}`);
             const $card = $(event.currentTarget);
-            const duration = parseInt($card.data('duration'));
-            const height = Math.ceil(this.settings.lineHeight * this.settings.rowsPerHour / 60 * duration);
 
-            const $movingCard = $card.clone()
-                .addClass('si-card-moving')
-                .appendTo($skedulerItemsEl.parent());
+            const $movingCard =
+                $card.clone()
+                    .addClass('si-card-moving')
+                    .removeClass('si-card-pinned')
+                    .width($card.width())
+                    .appendTo($skedulerWrapper);
 
-            $movingCard
-                .height(height + 'px')
-                .css({
-                    top: (event.clientY - 30) + 'px',
-                    left: (event.clientX - 50) + 'px'
-                })
+            //var bounce = $card[0].getBoundingClientRect();
+            // fixme ^^^
+            const offsetX = event.pageX,
+                  offsetY = event.pageY;
+
+            $movingCard.css({
+                top: offsetY + 'px',
+                left: offsetX + 'px'
+            });
 
             operation = {
                 $card, $movingCard
             };
+
+            $card.hide();
 
             this.$ownerDocument.on('mousemove', mouseMove);
             this.$ownerDocument.on('mouseup', mouseUp);
@@ -268,13 +330,19 @@ class Skeduler {
             const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;
 
+            const skItemHightlightDiv = div.clone()
+                .addClass('si-highlight-item')
+                .hide();
+
             const card = div.clone()
                 .attr({
                     style: 'top: ' + top + 'px; height: ' + height + 'px'
                 });
-            
+
             card.append(innerContent)
+                .append(skItemHightlightDiv)
                 .appendTo(placeholder);
+
         }, this);
     }
 

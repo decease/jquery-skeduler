@@ -12,7 +12,9 @@ const defaultSettings = {
     onClick: function (e, task) { },
 
     // Css classes
+    skedulerWrapperCssClass: 'skeduler-wrapper',
     containerCssClass: 'skeduler-container',
+    itemsCssClass: 'skeduler-items',
     headerContainerCssClass: 'skeduler-headers',
     schedulerContainerCssClass: 'skeduler-main',
     taskPlaceholderCssClass: 'skeduler-task-placeholder',
