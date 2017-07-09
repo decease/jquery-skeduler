@@ -1,26 +1,40 @@
 $(function () {
-  var populate = (data, template) => {
+  var matchFunc = function(item, areaToMatch) {
+    console.log({item, areaToMatch});
+
+    return {match: true, color: 'blue'};
+  }
+
+  var populate = function (data, itemCardTemplate, cardTemplate) {
     $("#skeduler-container").skeduler({
       rowsPerHour: 2,
       lineHeight: 20,
       getHeader: item => item.name,
       data: data.specialists,
       tasks: data.tasks,
-      cardTemplate: template,
-      onClick: (e, t) => { console.log(e, t); },
+      cardTemplate: cardTemplate,
+      onClick: function (e, t) { console.log(e, t); },
       itemsOptions: {
         enabled: true,
         containerSelector: "#skeduler-items",
-        items: data.items
+        itemCardTemplate: itemCardTemplate,
+        items: data.items,
+        matchFunc: matchFunc
       }
     });
   };
 
-  var templateLoaded = (template) => {
-    $.getJSON('demo/data.json', (data) => {
-      populate(data, template);
+  var cardTemplateLoaded = function (itemCardTemplate, cardTemplate) {
+    $.getJSON('demo/data.json', function (data) {
+      populate(data, itemCardTemplate, cardTemplate);
     });
   };
 
-  $.get('demo/card-template.html', templateLoaded);
+  var itemCardTemplateLoaded = function (itemCardTemplate) {
+    $.get('demo/card-template.html', function (cardTemplate) {
+      cardTemplateLoaded(itemCardTemplate, cardTemplate);
+    });
+  };
+
+  $.get('demo/item-card-template.html', itemCardTemplateLoaded);
 });

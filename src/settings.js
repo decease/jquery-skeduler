@@ -14,7 +14,6 @@ const defaultSettings = {
     // Css classes
     skedulerWrapperCssClass: 'skeduler-wrapper',
     containerCssClass: 'skeduler-container',
-    itemsCssClass: 'skeduler-items',
     headerContainerCssClass: 'skeduler-headers',
     schedulerContainerCssClass: 'skeduler-main',
     taskPlaceholderCssClass: 'skeduler-task-placeholder',
@@ -35,7 +34,14 @@ const defaultSettings = {
     debug: true,
 
     itemsOptions: {
-        enabled: false
+        enabled: false,
+        itemsCssClass: 'skeduler-items',
+        highlightItemCss: 'si-highlight-item',
+        containerSelector: "#skeduler-items",
+        itemCardCssClass: 'si-card',
+        itemCardTemplate: '',
+        items: [],
+        matchFunc: () => { return { match: true } }
     }
 };
 
