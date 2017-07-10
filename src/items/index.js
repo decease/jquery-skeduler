@@ -102,7 +102,7 @@ const populateSkedulerItems = (settings) => {
 
                 const offsetTop = y - elementBounding.top;
                 const rowCount = (Math.floor(offsetTop / rowHeight) - 1);
-                const startInMinutes = 60 / settings.rowsPerHour * rowCount; // <<== FIXME 
+                const offsetInMinutes = 60 / settings.rowsPerHour * rowCount; // <<== FIXME 
 
                 const interval = settings.data[$this.data('column')].workingTimeIntervals[$this.data('item-index')];
                 const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
