@@ -102,23 +102,22 @@ const populateSkedulerItems = (settings) => {
 
                 const offsetTop = y - elementBounding.top;
                 const rowCount = (Math.floor(offsetTop / rowHeight) - 1);
-                const offsetInMinutes = 60 / settings.rowsPerHour * rowCount; // <<== FIXME 
-                console.log($this.data('item-index'));
-                const interval = settings.data[$this.data('column')].workingTimeIntervals[$this.data('item-index')];
-                const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
-
                 const top = Math.min(
                     Math.max(0, rowCount * rowHeight),
                     this.clientHeight - height
                 );
-                
+
+                const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME 
+                console.log($this.data('item-index'));
+                const interval = settings.data[$this.data('column')].workingTimeIntervals[$this.data('item-index')];
+                const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
 
                 $el.css({ top: top })
                     .css('background-color', matchResult.color)
                     .height(height)
                     .show();
 
-                
+
                 $el.data('match', +matchResult.match);
             } else {
                 $el.data('match', 0);

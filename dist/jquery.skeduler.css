@@ -159,6 +159,7 @@
   right: 0;
   box-sizing: border-box;
   margin: 0;
+  overflow: hidden;
 }
 .si-highlight-item {
   background: #bce8f1;
