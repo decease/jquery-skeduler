@@ -6,7 +6,7 @@ const getItemDivs = (settings) => {
     const $div = div(settings.itemsOptions.itemCardCssClass);
     const items = settings.itemsOptions.items;
     const template = compileTemplate(settings.itemsOptions.itemCardTemplate, {
-        time: (item) => item.iterval ? `${item.iterval.start} to ${item.iterval.end}` : ''
+        time: (item) => item.interval ? `${item.interval.start} to ${item.interval.end}` : ''
     });
 
     return items.map((item, index) => $div.clone()
@@ -41,25 +41,25 @@ const populateSkedulerItems = (settings) => {
 
         const { $movingCard, $card } = operation;
 
-        const siEl = $('.' + settings.itemsOptions.highlightItemCss + ':visible'); // fixme
+        const $siEl = $('.' + settings.itemsOptions.highlightItemCss + ':visible'); // fixme
 
-        if (siEl.length !== 0) {
+        if ($siEl.length !== 0 && $siEl.data('match') == 1) {
             $movingCard
                 .detach()
-                .css({ top: siEl[0].offsetTop, left: 0 })
-                .height(siEl[0].clientHeight)
+                .css({ top: $siEl[0].offsetTop, left: 0 })
+                .height($siEl[0].clientHeight)
                 .width('auto')
                 .removeClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
                 .addClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
-                .appendTo(siEl.parent());
+                .appendTo($siEl.parent());
 
             $movingCard.on('mousedown', mouseDownOnCard);
-
-            $('.' + settings.itemsOptions.highlightItemCss).hide();
         } else {
             $movingCard.remove();
             $card.show();
         }
+
+        $('.' + settings.itemsOptions.highlightItemCss).hide();
 
         operation = null;
         $ownerDocument.off('mousemove', mouseMove);
@@ -69,14 +69,14 @@ const populateSkedulerItems = (settings) => {
     const mouseMove = (event) => {
         if (operation == null) return;
 
-        const { $movingCard } = operation;
+        const { $movingCard, offsetX, offsetY } = operation;
 
-        const offsetX = event.pageX,
-            offsetY = event.pageY;
+        const newOffsetX = event.pageX - offsetX,
+            newOffsetY = event.pageY - offsetY;
 
         $movingCard.css({
-            top: offsetY + 'px',
-            left: offsetX + 'px'
+            top: newOffsetY + 'px',
+            left: newOffsetX + 'px'
         });
 
         // Higlight shifts
@@ -87,9 +87,7 @@ const populateSkedulerItems = (settings) => {
         const rowHeight = settings.lineHeight + 1;
         const rowsPerHour = settings.rowsPerHour;
 
-        // FIXME: index not found
         const index = parseInt($movingCard.data('index'));
-        console.log(settings.itemsOptions.items, index);
         const item = settings.itemsOptions.items[index];
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
@@ -97,28 +95,34 @@ const populateSkedulerItems = (settings) => {
         $shifts.each(function () {
             const $this = $(this);
             const elementBounding = this.getBoundingClientRect();
+            const $el = $this.find('.' + settings.itemsOptions.highlightItemCss);
 
-            const matchResult = settings.itemsOptions.matchFunc(item, null);
-            //console.log(matchResult);
             if (x > elementBounding.left && x < elementBounding.right
-                && y > elementBounding.top && y < elementBounding.bottom
-                && matchResult.match) {
+                && y > elementBounding.top && y < elementBounding.bottom) {
 
                 const offsetTop = y - elementBounding.top;
+                const rowCount = (Math.floor(offsetTop / rowHeight) - 1);
+                const startInMinutes = 60 / settings.rowsPerHour * rowCount; // <<== FIXME 
+
+                const interval = settings.data[$this.data('column')].workingTimeIntervals[$this.data('item-index')];
+                const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
+
                 const top = Math.min(
-                    Math.max(0, (Math.floor(offsetTop / rowHeight) - 1) * rowHeight),
+                    Math.max(0, rowCount * rowHeight),
                     this.clientHeight - height
                 );
-                //console.log($this.find('.' + settings.itemsOptions.highlightItemCss));
-                $this
-                    .find('.' + settings.itemsOptions.highlightItemCss)
-                    .css({ top: top })
+                
+
+                $el.css({ top: top })
                     .css('background-color', matchResult.color)
                     .height(height)
                     .show();
 
+                
+                $el.data('match', +matchResult.match);
             } else {
-                $this.find('.' + settings.itemsOptions.highlightItemCss).hide();
+                $el.data('match', 0);
+                $el.hide();
             }
         });
     };
@@ -131,6 +135,7 @@ const populateSkedulerItems = (settings) => {
 
         const $movingCard =
             $card.clone()
+                .data('index', $card.data('index'))
                 .addClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
                 .removeClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
                 .width($card.width())
@@ -138,8 +143,8 @@ const populateSkedulerItems = (settings) => {
 
         //var bounce = $card[0].getBoundingClientRect();
         // fixme ^^^
-        const offsetX = event.pageX,
-            offsetY = event.pageY;
+        const offsetX = event.pageX - event.offsetX,
+            offsetY = event.pageY - event.offsetY;
 
         $movingCard.css({
             top: offsetY + 'px',
@@ -147,7 +152,8 @@ const populateSkedulerItems = (settings) => {
         });
 
         operation = {
-            $card, $movingCard
+            $card, $movingCard,
+            offsetX: event.offsetX, offsetY: event.offsetY
         };
 
         $card.hide();

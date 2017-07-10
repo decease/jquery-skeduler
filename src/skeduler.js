@@ -46,15 +46,15 @@ class Skeduler {
 
         // Add scheduler
         this.$scheduleEl = div.clone().addClass(this.settings.schedulerContainerCssClass);
-        var scheduleTimelineEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-timeline');
-        var scheduleBodyEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-body');
+        const scheduleTimelineEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-timeline');
+        const scheduleBodyEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-body');
 
-        var gridColumnElement = div.clone();
+        const gridColumnElement = div.clone();
 
-        for (var i = 0; i < 24; i++) {
+        for (let i = 0; i < 24; i++) {
             // Populate timeline
-            for (var j = 0; j < this.settings.rowsPerHour; j++) {
-                var timelineCell = div.clone()
+            for (let j = 0; j < this.settings.rowsPerHour; j++) {
+                let timelineCell = div.clone()
                     .height(this.settings.lineHeight)
                     .addClass(j == this.settings.rowsPerHour - 1 ? "last" : "");
 
@@ -74,16 +74,16 @@ class Skeduler {
         }
 
         // Populate grid
-        for (var j = 0; j < headers.length; j++) {
-            var el = gridColumnElement.clone();
+        for (let j = 0; j < headers.length; j++) {
+            const el = gridColumnElement.clone();
 
-            var tasksPlaceholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
+            const tasksPlaceholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
             this.appendTasks(tasksPlaceholder, this.settings.tasks.filter(t => t.column == j));
 
             // fixme [workingTimeIntervals must not use index]
-            var workingIntervalsPlaceholder = div.clone().addClass(this.settings.workingIntervalPlaceholderCssClass);
-            var intervals = this.settings.data.find(d => d.id === j + 1).workingTimeIntervals;
-            this.appendAvailableInterval(workingIntervalsPlaceholder, intervals);
+            const workingIntervalsPlaceholder = div.clone().addClass(this.settings.workingIntervalPlaceholderCssClass);
+            const intervals = this.settings.data[j].workingTimeIntervals;
+            this.appendAvailableInterval(workingIntervalsPlaceholder, intervals, j);
 
             el.prepend(tasksPlaceholder);
             el.prepend(workingIntervalsPlaceholder);
@@ -98,7 +98,7 @@ class Skeduler {
         this.$container.append(this.$scheduleEl);
 
         // Set default width for columns
-        for (var j = 0; j < headers.length; j++) {
+        for (let j = 0; j < headers.length; j++) {
             this.updateColumnWidth(j, this.settings.columnWidth);
         }
 
@@ -158,6 +158,10 @@ class Skeduler {
         return (this.settings.lineHeight + this.settings.borderWidth) * (startTimeInt * this.settings.rowsPerHour);
     }
 
+    /**
+     * Parse time string and present it in hours (ex. '13:30' => 13.5)
+     * @param {*string} time - time in format like '13:50', '11:00', '14'
+     */
     parseTime(time) {
         return /\d{2}\:\d{2}/.test(time)
             ? parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60
@@ -194,9 +198,9 @@ class Skeduler {
         }, this);
     }
 
-    appendAvailableInterval(placeholder, intervals) {
+    appendAvailableInterval(placeholder, intervals, column) {
         const div = $('<div></div>');
-        intervals.forEach((interval) => {
+        intervals.forEach((interval, index) => {
             const innerContent = div.clone().text('Not allocated');
             const top = this.getCardTopPosition(interval.start) + 2;
             const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
@@ -211,7 +215,10 @@ class Skeduler {
                     style: 'top: ' + top + 'px; height: ' + height + 'px'
                 });
 
-            card.append(innerContent)
+            card
+                .data('column', column)
+                .data('item-index', index)
+                .append(innerContent)
                 .append(skItemHightlightDiv)
                 .appendTo(placeholder);
 

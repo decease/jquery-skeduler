@@ -3,17 +3,22 @@
         {
             "name": "Ben Johnson",
             "duration": 120,
-            "iterval": { "start": "8:00", "end": "10:00" }
+            "interval": { "start": "8:00", "end": "10:00" }
         },
         {
             "name": "John Adams",
-            "duration": 180,
-            "iterval": { "start": "10:00", "end": "15:00" }
+            "duration": 300,
+            "interval": { "start": "10:00", "end": "15:00" }
+        },
+        {
+            "name": "John Smith",
+            "duration": 300,
+            "interval": { "start": "11:00", "end": "16:00" }
         },
         {
             "name": "Margaret Smith",
             "duration": 90,
-            "iterval": { "start": "13:00", "end": "14:30" }
+            "interval": { "start": "13:00", "end": "14:30" }
         },
         {
             "name": "Linda Rich",
