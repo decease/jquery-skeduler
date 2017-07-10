@@ -101,7 +101,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
   z-index: 100;
   overflow: hidden;
   background-color: rgba(234, 234, 234, 0.75);

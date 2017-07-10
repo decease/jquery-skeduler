@@ -201,7 +201,7 @@ class Skeduler {
     appendAvailableInterval(placeholder, intervals, column) {
         const div = $('<div></div>');
         intervals.forEach((interval, index) => {
-            const innerContent = div.clone().text('Not allocated');
+            const innerContent = div.clone().text(this.settings.notAllocatedLabel);
             const top = this.getCardTopPosition(interval.start) + 2;
             const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;

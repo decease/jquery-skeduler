@@ -1,8 +1,10 @@
 const defaultSettings = {
     // Data attributes
-    headers: null,  // String[] - Array of column headers
-    tasks: [],    // Task[] - Array of tasks. Required fields: 
-    // id: number, startTime: number, duration: number, column: number
+    headers: null,  // string[] - Array of column headers
+    tasks: [],      // Task[] - Array of tasks. Required fields: 
+                    // id: number, startTime: number, duration: number, column: number
+
+    notAllocatedLabel: 'Not allocated',
 
     // Card template - Inner content of task card. 
     // You're able to use ${key} inside template, where key is any property from task.
@@ -39,7 +41,7 @@ const defaultSettings = {
         highlightItemCss: 'si-highlight-item',
         containerSelector: "#skeduler-items",
         itemCardCssClass: 'si-card',
-        itemCardTemplate: '',
+        itemCardTemplate: '<div>${duration}</div>',
         items: [],
         matchFunc: () => { return { match: true } }
     }
