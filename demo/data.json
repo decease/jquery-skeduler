@@ -2,15 +2,27 @@
     "items": [
         {
             "name": "Ben Johnson",
-            "iterval": { "start": "8:00", "end": "10:00" }
+            "duration": 120,
+            "interval": { "start": "8:00", "end": "10:00" }
         },
         {
             "name": "John Adams",
-            "iterval": { "start": "10:00", "end": "15:00" }
+            "duration": 300,
+            "interval": { "start": "10:00", "end": "15:00" }
+        },
+        {
+            "name": "John Smith",
+            "duration": 300,
+            "interval": { "start": "11:00", "end": "16:00" }
         },
         {
             "name": "Margaret Smith",
-            "iterval": { "start": "13:00", "end": "14:30" }
+            "duration": 90,
+            "interval": { "start": "14:00", "end": "15:30" }
+        },
+        {
+            "name": "Linda Rich",
+            "duration": 60
         }
     ],
     "tasks": [

@@ -1,8 +1,10 @@
 import { defaultSettings } from './settings';
+import populateSkedulerItems from './items';
+import { compileTemplate } from './template';
 
 class Skeduler {
     constructor($container, options) {
-        this.settings = $.extend(defaultSettings, options);
+        this.settings = $.extend(true, defaultSettings, options);
         this.$container = $container;
         this.$ownerDocument = $($container[0].ownerDocument);
         this.$headerContainer = null;
@@ -13,9 +15,9 @@ class Skeduler {
             console.time('skeduler');
         }
 
-        this.populate($container, options);
+        this.populate();
         if (this.settings.itemsOptions.enabled) {
-            this.populateSkedulerItems(this.settings.itemsOptions);
+            populateSkedulerItems(this.settings);
         }
 
         if (this.settings.debug) {
@@ -35,7 +37,6 @@ class Skeduler {
 
         // Add headers
         this.$headerContainer = div.clone().addClass(this.settings.headerContainerCssClass);
-        console.log('this.$headerContainer', this.$headerContainer);
         headers.forEach((element) => {
             div.clone()
                 .text(element)
@@ -45,15 +46,15 @@ class Skeduler {
 
         // Add scheduler
         this.$scheduleEl = div.clone().addClass(this.settings.schedulerContainerCssClass);
-        var scheduleTimelineEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-timeline');
-        var scheduleBodyEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-body');
+        const scheduleTimelineEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-timeline');
+        const scheduleBodyEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-body');
 
-        var gridColumnElement = div.clone();
+        const gridColumnElement = div.clone();
 
-        for (var i = 0; i < 24; i++) {
+        for (let i = 0; i < 24; i++) {
             // Populate timeline
-            for (var j = 0; j < this.settings.rowsPerHour; j++) {
-                var timelineCell = div.clone()
+            for (let j = 0; j < this.settings.rowsPerHour; j++) {
+                let timelineCell = div.clone()
                     .height(this.settings.lineHeight)
                     .addClass(j == this.settings.rowsPerHour - 1 ? "last" : "");
 
@@ -73,16 +74,16 @@ class Skeduler {
         }
 
         // Populate grid
-        for (var j = 0; j < headers.length; j++) {
-            var el = gridColumnElement.clone();
+        for (let j = 0; j < headers.length; j++) {
+            const el = gridColumnElement.clone();
 
-            var tasksPlaceholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
+            const tasksPlaceholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
             this.appendTasks(tasksPlaceholder, this.settings.tasks.filter(t => t.column == j));
 
-            // fixme
-            var workingIntervalsPlaceholder = div.clone().addClass(this.settings.workingIntervalPlaceholderCssClass);
-            var intervals = this.settings.data.find(d => d.id === j + 1).workingTimeIntervals;
-            this.appendAvailableInterval(workingIntervalsPlaceholder, intervals);
+            // fixme [workingTimeIntervals must not use index]
+            const workingIntervalsPlaceholder = div.clone().addClass(this.settings.workingIntervalPlaceholderCssClass);
+            const intervals = this.settings.data[j].workingTimeIntervals;
+            this.appendAvailableInterval(workingIntervalsPlaceholder, intervals, j);
 
             el.prepend(tasksPlaceholder);
             el.prepend(workingIntervalsPlaceholder);
@@ -97,7 +98,7 @@ class Skeduler {
         this.$container.append(this.$scheduleEl);
 
         // Set default width for columns
-        for (var j = 0; j < headers.length; j++) {
+        for (let j = 0; j < headers.length; j++) {
             this.updateColumnWidth(j, this.settings.columnWidth);
         }
 
@@ -105,130 +106,6 @@ class Skeduler {
         if (this.settings.columnResizeEnabled) {
             this.configureResizing();
         }
-    }
-
-    populateSkedulerItems(options) {
-        const $skedulerItemsEl = $(options.containerSelector)
-            .addClass(this.settings.itemsCssClass);
-        const $shifts = $('.skeduler-interval-placeholder > div');
-
-        // TODO: Generate item's divs
-        // $skedulerItemsEl.html(`
-        //   <div></div>
-        // `);
-        let operation = null;
-
-        const mouseUp = (event) => {
-            if (operation == null) return;
-
-            const { $movingCard, $card } = operation;
-
-            const siEl = $('.si-highlight-item:visible'); // fixme
-
-            if (siEl.length !== 0) {
-                $movingCard
-                    .detach()
-                    .css({ top: siEl[0].offsetTop, left: 0 })
-                    .height(siEl[0].clientHeight)
-                    .width('auto')
-                    .removeClass('si-card-moving')
-                    .addClass('si-card-pinned')
-                    .appendTo(siEl.parent());
-
-                $movingCard.on('mousedown', mouseDownOnCard);
-
-                $('.si-highlight-item').hide();
-            } else {
-                $movingCard.remove();
-                $card.show();
-            }
-
-            operation = null;
-            this.$ownerDocument.off('mousemove', mouseMove);
-            this.$ownerDocument.off('mouseup', mouseUp);
-        };
-
-        const mouseMove = (event) => {
-            if (operation == null) return;
-
-            const { $movingCard } = operation;
-
-            const offsetX = event.pageX,
-                  offsetY = event.pageY;
-
-            $movingCard.css({
-                top: offsetY + 'px',
-                left: offsetX + 'px'
-            });
-
-            // Higlight shifts
-            const _window = this.$ownerDocument[0].defaultView;
-            const x = event.pageX;
-            const y = event.pageY - _window.scrollY;
-
-            const rowHeight = this.settings.lineHeight + 1;
-            const rowsPerHour = this.settings.rowsPerHour;
-            const height = parseInt($movingCard.data('duration')) * (rowHeight * rowsPerHour / 60);
-
-            $shifts.each(function () {
-                const $this = $(this);
-                const elementBounding = this.getBoundingClientRect();
-                if (x > elementBounding.left && x < elementBounding.right
-                    && y > elementBounding.top && y < elementBounding.bottom
-                    && this.clientHeight >= height) {
-                    const offsetTop = y - elementBounding.top;
-                    const top = Math.min(
-                        Math.max(0, (Math.floor(offsetTop / rowHeight) - 1) * rowHeight),
-                        this.clientHeight - height
-                    );
-
-                    $this
-                        .find('.si-highlight-item')
-                        .css({ top: top })
-                        .height(height)
-                        .show();
-                } else {
-                    $this.find('.si-highlight-item').hide();
-                }
-            });
-        };
-
-        const mouseDownOnCard = (event /*: MouseEvent */) => {
-            if (event.which !== 1) { return; }
-
-            const $skedulerWrapper = $(`.${this.settings.skedulerWrapperCssClass}`);
-            const $card = $(event.currentTarget);
-
-            const $movingCard =
-                $card.clone()
-                    .addClass('si-card-moving')
-                    .removeClass('si-card-pinned')
-                    .width($card.width())
-                    .appendTo($skedulerWrapper);
-
-            //var bounce = $card[0].getBoundingClientRect();
-            // fixme ^^^
-            const offsetX = event.pageX,
-                  offsetY = event.pageY;
-
-            $movingCard.css({
-                top: offsetY + 'px',
-                left: offsetX + 'px'
-            });
-
-            operation = {
-                $card, $movingCard
-            };
-
-            $card.hide();
-
-            this.$ownerDocument.on('mousemove', mouseMove);
-            this.$ownerDocument.on('mouseup', mouseUp);
-
-            event.preventDefault();
-        };
-
-        $skedulerItemsEl.find('.si-card').on('mousedown', mouseDownOnCard);
     }
 
     configureResizing() {
@@ -281,6 +158,10 @@ class Skeduler {
         return (this.settings.lineHeight + this.settings.borderWidth) * (startTimeInt * this.settings.rowsPerHour);
     }
 
+    /**
+     * Parse time string and present it in hours (ex. '13:30' => 13.5)
+     * @param {*string} time - time in format like '13:50', '11:00', '14'
+     */
     parseTime(time) {
         return /\d{2}\:\d{2}/.test(time)
             ? parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60
@@ -291,13 +172,8 @@ class Skeduler {
     * Render card template
     */
     renderInnerCardContent(task) {
-        var result = this.settings.cardTemplate;
-        for (var key in task) {
-            if (task.hasOwnProperty(key)) {
-                // TODO: replace all
-                result = result.replace('${' + key + '}', task[key]);
-            }
-        }
+        const template = this.settings.cardTemplate;
+        const result = compileTemplate(template)(task);
 
         return $(result);
     }
@@ -322,10 +198,10 @@ class Skeduler {
         }, this);
     }
 
-    appendAvailableInterval(placeholder, intervals) {
+    appendAvailableInterval(placeholder, intervals, column) {
         const div = $('<div></div>');
-        intervals.forEach((interval) => {
-            const innerContent = div.clone().text('Not allocated');
+        intervals.forEach((interval, index) => {
+            const innerContent = div.clone().text(this.settings.notAllocatedLabel);
             const top = this.getCardTopPosition(interval.start) + 2;
             const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;
@@ -339,7 +215,10 @@ class Skeduler {
                     style: 'top: ' + top + 'px; height: ' + height + 'px'
                 });
 
-            card.append(innerContent)
+            card
+                .data('column', column)
+                .data('item-index', index)
+                .append(innerContent)
                 .append(skItemHightlightDiv)
                 .appendTo(placeholder);
 
@@ -384,8 +263,6 @@ class Skeduler {
 
         let $currentGrip = $(event.currentTarget);
         let columnNumber = $currentGrip.data('column-id');
-
-        console.log(this.$headerContainer);
 
         let gripIndex = $currentGrip.index();
         let $leftColumn = this.$headerContainer.find('div').eq(gripIndex);
