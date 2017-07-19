@@ -10,6 +10,12 @@ function generate() {
         startTime += 1 + duration;
       }
 
+      if (Math.random() * 10 > 7) {
+        startTime -= duration / 2;
+
+        startTime = Math.max(0, startTime);
+      }
+
       if (startTime > 23) {
         break;
       }

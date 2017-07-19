@@ -30,7 +30,7 @@
    * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
    */
   function toTimeString(value) {
-    return (value < 10 ? '0' : '') + Math.ceil(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
+    return (value < 10 ? '0' : '') + Math.floor(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
   }
 
   /**
@@ -68,14 +68,35 @@
    * Generate task cards
    */
   function appendTasks(placeholder, tasks) {
-    tasks.forEach(function(task) {
+    var find = function (tasks, h) {
+      var items = [];
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].startTime <= h && tasks[i].startTime + tasks[i].duration >= h) {
+          items.push(tasks[i]);
+        }
+      }
+
+      return items;
+    }
+
+    for (var h = 1; h <= 24; h += .5) {
+      var itemsInHour = find(tasks, h);
+      for (var i = 0; i < itemsInHour.length; i++) {
+          itemsInHour[i].width = Math.min(itemsInHour[i].width, 194 / itemsInHour.length);
+          itemsInHour[i].left = Math.max(itemsInHour[i].left, itemsInHour[i].width * i + 4);
+      }
+    }
+
+    tasks.forEach(function(task, index) {
       var innerContent = renderInnerCardContent(task);
-      var top = getCardTopPosition(task.startTime);
+      var top = getCardTopPosition(task.startTime) + 2;
       var height = getCardHeight(task.duration);
+      var width = task.width || 194;
+      var left = task.left || 4;
 
       var card = $('<div></div>')
         .attr({
-          style: 'top: ' + top + 'px; height: ' + height + 'px',
+          style: 'top: ' + top + 'px; height: ' + (height - 4) + 'px; ' + 'width: ' + (width - 8) + 'px; left: ' + left + 'px',
           title: toTimeString(task.startTime) + ' - ' + toTimeString(task.startTime + task.duration)
         });
         card.on('click', function (e) { settings.onClick && settings.onClick(e, task) });
