@@ -1,28 +1,28 @@
-(function ( $ ) {
+(function ($) {
   var defaultSettings = {
-      // Data attributes
-      headers: [],  // String[] - Array of column headers
-      tasks: [],    // Task[] - Array of tasks. Required fields: 
-                    // id: number, startTime: number, duration: number, column: number
+    // Data attributes
+    headers: [],  // String[] - Array of column headers
+    tasks: [],    // Task[] - Array of tasks. Required fields: 
+    // id: number, startTime: number, duration: number, column: number
 
-      // Card template - Inner content of task card. 
-      // You're able to use ${key} inside template, where key is any property from task.
-      cardTemplate: '<div>${id}</div>',
+    // Card template - Inner content of task card. 
+    // You're able to use ${key} inside template, where key is any property from task.
+    cardTemplate: '<div>${id}</div>',
 
-      // OnClick event handler
-      onClick: function (e, task) {},
+    // OnClick event handler
+    onClick: function (e, task) { },
 
-      // Css classes
-      containerCssClass: 'skeduler-container',
-      headerContainerCssClass: 'skeduler-headers',
-      schedulerContainerCssClass: 'skeduler-main',
-      taskPlaceholderCssClass: 'skeduler-task-placeholder',
-      cellCssClass: 'skeduler-cell',
+    // Css classes
+    containerCssClass: 'skeduler-container',
+    headerContainerCssClass: 'skeduler-headers',
+    schedulerContainerCssClass: 'skeduler-main',
+    taskPlaceholderCssClass: 'skeduler-task-placeholder',
+    cellCssClass: 'skeduler-cell',
 
-      lineHeight: 30,      // height of one half-hour line in grid
-      borderWidth: 1,      // width of board of grid cell
+    lineHeight: 30,      // height of one half-hour line in grid
+    borderWidth: 1,      // width of board of grid cell
 
-      debug: false
+    debug: false
   };
   var settings = {};
 
@@ -64,7 +64,7 @@
     return $(result);
   }
 
-  /** 
+  /**
    * Generate task cards
    */
   function appendTasks(placeholder, tasks) {
@@ -82,12 +82,15 @@
     for (var h = 1; h <= 24; h += .5) {
       var itemsInHour = find(tasks, h);
       for (var i = 0; i < itemsInHour.length; i++) {
-          itemsInHour[i].width = Math.min(itemsInHour[i].width, 194 / itemsInHour.length);
-          itemsInHour[i].left = Math.max(itemsInHour[i].left, itemsInHour[i].width * i + 4);
+        itemsInHour[i].width = Math.min(itemsInHour[i].width || 194, 194 / itemsInHour.length);
+        itemsInHour[i].left = Math.max(itemsInHour[i].left || 0, itemsInHour[i].width * i + 4);
+
+        console.log('width', itemsInHour[i].width);
+        console.log('left', itemsInHour[i].left);
       }
     }
 
-    tasks.forEach(function(task, index) {
+    tasks.forEach(function (task, index) {
       var innerContent = renderInnerCardContent(task);
       var top = getCardTopPosition(task.startTime) + 2;
       var height = getCardHeight(task.duration);
@@ -99,8 +102,8 @@
           style: 'top: ' + top + 'px; height: ' + (height - 4) + 'px; ' + 'width: ' + (width - 8) + 'px; left: ' + left + 'px',
           title: toTimeString(task.startTime) + ' - ' + toTimeString(task.startTime + task.duration)
         });
-        card.on('click', function (e) { settings.onClick && settings.onClick(e, task) });
-        card.append(innerContent)
+      card.on('click', function (e) { settings.onClick && settings.onClick(e, task) });
+      card.append(innerContent)
         .appendTo(placeholder);
     }, this);
   }
@@ -116,7 +119,7 @@
   * - lineHeight - height of one half-hour cell in grid
   * - borderWidth - width of border of cell in grid
   */
-  $.fn.skeduler = function( options ) {
+  $.fn.skeduler = function (options) {
     settings = $.extend(defaultSettings, options);
 
     if (settings.debug) {
@@ -132,7 +135,7 @@
 
     // Add headers
     var headerContainer = div.clone().addClass(settings.headerContainerCssClass);
-    settings.headers.forEach(function(element) {
+    settings.headers.forEach(function (element) {
       div.clone().text(element).appendTo(headerContainer);
     }, this);
     skedulerEl.append(headerContainer);
@@ -158,9 +161,11 @@
     // Populate grid
     for (var j = 0; j < settings.headers.length; j++) {
       var el = gridColumnElement.clone();
-      
+
       var placeholder = div.clone().addClass(settings.taskPlaceholderCssClass);
+      console.groupCollapsed('append tasks for column' + j);
       appendTasks(placeholder, settings.tasks.filter(function (t) { return t.column == j }));
+      console.groupEnd('append tasks for column' + j);
 
       el.prepend(placeholder);
       el.appendTo(scheduleBodyEl);
@@ -177,4 +182,4 @@
 
     return skedulerEl;
   };
-}( jQuery ));
+}(jQuery));

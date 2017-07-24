@@ -10,7 +10,7 @@ function generate() {
         startTime += 1 + duration;
       }
 
-      if (Math.random() * 10 > 7) {
+      if (Math.random() * 10 > 5) {
         startTime -= duration / 2;
 
         startTime = Math.max(0, startTime);
