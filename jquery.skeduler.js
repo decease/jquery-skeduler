@@ -74,9 +74,9 @@
         var k = 0;
         var j = i + 1;
         while (j < tasks.length && tasks[i].startTime < tasks[j].startTime
-           && tasks[i].startTime + tasks[i].duration >= tasks[j].startTime) {
-            k++;
-            j++;
+          && tasks[i].startTime + tasks[i].duration > tasks[j].startTime) {
+          k++;
+          j++;
         }
 
         coefficients.push(k);
@@ -84,17 +84,44 @@
 
       coefficients.push(0);
       return coefficients;
-    }
+    };
 
-    var args = findCoefficients();
-    for (var i = 0; i < args.length; i++) {
-      var width = Math.min(tasks[i].width || 194, 194 / (args[i] + 1));
-      //console.log(width);
-      for (var j = 0; j <= args[i]; j++) {
-        tasks[i + j].width = width;
-        tasks[i + j].left = Math.max(width * j + j * 4, tasks[i + j].left || 4);
-        console.log(tasks[i + j].left);
+    var normalize = function (args) {
+      var indexes = {};
+      for (var i = 0; i < args.length; i++) {
+        var start = i;
+        var count = 0;
+        while (args[i] != 0) {
+          i++;
+          count++;
+        }
+        var end = i;
+        if (count) {
+          count++;
+        }
+
+        var index = 0;
+        for (var j = start; j <= end; j++) {
+          args[j] = count;
+          indexes[j] = index++;
+        }
       }
+
+      return {args: args, indexes: indexes};
+    };
+
+    var args =
+      normalize(
+        findCoefficients()
+      );
+    console.log(findCoefficients());
+    console.log(args);
+
+    for (var i = 0; i < args.args.length; i++) {
+      var width = 194 / (args.args[i] || 1);
+
+      tasks[i].width = width;
+      tasks[i].left = (args.indexes[i] * width) || 4;
     }
 
     tasks.forEach(function (task, index) {
