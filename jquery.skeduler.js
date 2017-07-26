@@ -68,25 +68,32 @@
    * Generate task cards
    */
   function appendTasks(placeholder, tasks) {
-    var find = function (tasks, h) {
-      var items = [];
-      for (var i = 0; i < tasks.length; i++) {
-        if (tasks[i].startTime <= h && tasks[i].startTime + tasks[i].duration >= h) {
-          items.push(tasks[i]);
+    var findCoefficients = function () {
+      var coefficients = [];
+      for (var i = 0; i < tasks.length - 1; i++) {
+        var k = 0;
+        var j = i + 1;
+        while (j < tasks.length && tasks[i].startTime < tasks[j].startTime
+           && tasks[i].startTime + tasks[i].duration >= tasks[j].startTime) {
+            k++;
+            j++;
         }
+
+        coefficients.push(k);
       }
 
-      return items;
+      coefficients.push(0);
+      return coefficients;
     }
 
-    for (var h = 1; h <= 24; h += .5) {
-      var itemsInHour = find(tasks, h);
-      for (var i = 0; i < itemsInHour.length; i++) {
-        itemsInHour[i].width = Math.min(itemsInHour[i].width || 194, 194 / itemsInHour.length);
-        itemsInHour[i].left = Math.max(itemsInHour[i].left || 0, itemsInHour[i].width * i + 4);
-
-        console.log('width', itemsInHour[i].width);
-        console.log('left', itemsInHour[i].left);
+    var args = findCoefficients();
+    for (var i = 0; i < args.length; i++) {
+      var width = Math.min(tasks[i].width || 194, 194 / (args[i] + 1));
+      //console.log(width);
+      for (var j = 0; j <= args[i]; j++) {
+        tasks[i + j].width = width;
+        tasks[i + j].left = Math.max(width * j + j * 4, tasks[i + j].left || 4);
+        console.log(tasks[i + j].left);
       }
     }
 
