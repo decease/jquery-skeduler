@@ -10,6 +10,12 @@ function generate() {
         startTime += 1 + duration;
       }
 
+      if (Math.random() * 10 > 5) {
+        startTime -= duration;
+
+        startTime = Math.max(0, startTime);
+      }
+
       if (startTime > 23) {
         break;
       }
@@ -31,6 +37,8 @@ function generate() {
   }
 
   console.log("tasks count: " + tasks.length);
+
+  console.log(JSON.stringify(tasks));
 
   $("#skeduler-container").skeduler({
     headers: ["Specialist 1", "Specialist 2", "Specialist 3", "Specialist 4", "Specialist 5",  "Specialist 6", "Specialist 7", "Specialist 8", "Specialist 9", "Specialist 10"],
