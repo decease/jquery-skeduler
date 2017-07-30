@@ -114,8 +114,6 @@
       normalize(
         findCoefficients()
       );
-    console.log(findCoefficients());
-    console.log(args);
 
     for (var i = 0; i < args.args.length; i++) {
       var width = 194 / (args.args[i] || 1);
@@ -197,9 +195,7 @@
       var el = gridColumnElement.clone();
 
       var placeholder = div.clone().addClass(settings.taskPlaceholderCssClass);
-      console.groupCollapsed('append tasks for column' + j);
       appendTasks(placeholder, settings.tasks.filter(function (t) { return t.column == j }));
-      console.groupEnd('append tasks for column' + j);
 
       el.prepend(placeholder);
       el.appendTo(scheduleBodyEl);
