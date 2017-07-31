@@ -163,7 +163,7 @@ class Skeduler {
      * @param {*string} time - time in format like '13:50', '11:00', '14'
      */
     parseTime(time) {
-        return /\d{2}\:\d{2}/.test(time)
+        return /\d{1,2}\:\d{2}/.test(time)
             ? parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60
             : parseInt(time);
     }
@@ -203,6 +203,7 @@ class Skeduler {
         intervals.forEach((interval, index) => {
             const innerContent = div.clone().text(this.settings.notAllocatedLabel);
             const top = this.getCardTopPosition(interval.start) + 2;
+            console.log('top for start: ', top, interval.start)
             const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;
 
