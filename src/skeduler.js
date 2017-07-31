@@ -15,17 +15,26 @@ class Skeduler {
             console.time('skeduler');
         }
 
-        this.populate();
-        if (this.settings.itemsOptions.enabled) {
-            populateSkedulerItems(this.settings);
-        }
+        this.refresh();
 
         if (this.settings.debug) {
             console.timeEnd('skeduler');
         }
     }
 
-    populate() {
+    setRowsPerHour(rowsPerHour) {
+        this.settings.rowsPerHour = rowsPerHour;
+        this.refresh();
+    }
+
+    refresh() {
+        this.populate();
+        if (this.settings.itemsOptions.enabled) {
+            populateSkedulerItems(this.settings);
+        }
+    }
+
+    private populate() {
         this.$container.empty();
         this.$container.addClass(this.settings.containerCssClass);
 
@@ -108,7 +117,7 @@ class Skeduler {
         }
     }
 
-    configureResizing() {
+    private configureResizing() {
         const div = $('<div></div>');
 
         const skedulerElResizableHandler = div.clone()
@@ -135,7 +144,7 @@ class Skeduler {
     /**
        * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
        */
-    toTimeString(value) {
+    private toTimeString(value) {
         return (value < 10 ? '0' : '') + Math.ceil(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
     }
 
@@ -143,7 +152,7 @@ class Skeduler {
      * Return height of task card based on duration of the task
      * duration - in hours
      */
-    getCardHeight(duration) {
+    private getCardHeight(duration) {
         const durationInMinutes = duration * 60;
         const heightOfMinute = (this.settings.lineHeight + this.settings.borderWidth) * this.settings.rowsPerHour / 60;
         return Math.ceil(durationInMinutes * heightOfMinute);
@@ -153,7 +162,7 @@ class Skeduler {
      * Return top offset of task card based on start time of the task
      * startTime - in hours
      */
-    getCardTopPosition(startTime) {
+    private getCardTopPosition(startTime) {
         const startTimeInt = this.parseTime(startTime);
         return (this.settings.lineHeight + this.settings.borderWidth) * (startTimeInt * this.settings.rowsPerHour);
     }
@@ -162,7 +171,7 @@ class Skeduler {
      * Parse time string and present it in hours (ex. '13:30' => 13.5)
      * @param {*string} time - time in format like '13:50', '11:00', '14'
      */
-    parseTime(time) {
+    private parseTime(time) {
         return /\d{1,2}\:\d{2}/.test(time)
             ? parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60
             : parseInt(time);
@@ -171,7 +180,7 @@ class Skeduler {
     /**
     * Render card template
     */
-    renderInnerCardContent(task) {
+    private renderInnerCardContent(task) {
         const template = this.settings.cardTemplate;
         const result = compileTemplate(template)(task);
 
@@ -181,7 +190,7 @@ class Skeduler {
     /** 
      * Generate task cards
      */
-    appendTasks(placeholder, tasks) {
+    private appendTasks(placeholder, tasks) {
         tasks.forEach((task) => {
             var innerContent = this.renderInnerCardContent(task);
             var top = this.getCardTopPosition(task.startTime);
@@ -198,7 +207,7 @@ class Skeduler {
         }, this);
     }
 
-    appendAvailableInterval(placeholder, intervals, column) {
+    private appendAvailableInterval(placeholder, intervals, column) {
         const div = $('<div></div>');
         intervals.forEach((interval, index) => {
             const innerContent = div.clone().text(this.settings.notAllocatedLabel);
@@ -226,7 +235,7 @@ class Skeduler {
         }, this);
     }
 
-    onPointerUp(event) {
+    private onPointerUp(event) {
         let op = this.operation;
         if (!this.operation) { return; }
 
@@ -236,7 +245,7 @@ class Skeduler {
         this.operation = null;
     }
 
-    onPointerMove(event) {
+    private onPointerMove(event) {
         let op = this.operation;
         if (!this.operation) { return; }
 
@@ -251,7 +260,7 @@ class Skeduler {
         this.updateColumnWidth(columnNumber, width.toFixed(2));
     }
 
-    onPointerDown(event) {
+    private onPointerDown(event) {
         // Only applies to left-click dragging
         if (event.which !== 1) { return; }
 
@@ -282,7 +291,7 @@ class Skeduler {
         event.preventDefault();
     }
 
-    updateColumnWidth(columnNumber, width) {
+    private updateColumnWidth(columnNumber, width) {
         width = Math.max(width, this.settings.minColumnWidth);
         $('.' + this.settings.headerContainerCssClass + ' > div:eq(' + columnNumber + ')')
             .css('flex-basis', width + 'px');

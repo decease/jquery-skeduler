@@ -24,7 +24,7 @@ const populateSkedulerItems = (settings) => {
 
     // TODO: Generate item's divs
     const $headerDiv = div()
-        .html('<h1 class="si-header">Items</h1>')
+        .html('<h1 class="si-header">' + settings.itemsOptions.title + '</h1>')
         .appendTo($skedulerItemsEl);
 
     const $skedulerItemsContainerEl = div('si-container');
