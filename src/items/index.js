@@ -22,7 +22,6 @@ const populateSkedulerItems = (settings) => {
     const $ownerDocument = $($skedulerItemsEl[0].ownerDocument);
     const $shifts = $('.' + settings.workingIntervalPlaceholderCssClass + ' > div');
 
-    // TODO: Generate item's divs
     const $headerDiv = div()
         .html('<h1 class="si-header">' + settings.itemsOptions.title + '</h1>')
         .appendTo($skedulerItemsEl);
@@ -44,6 +43,14 @@ const populateSkedulerItems = (settings) => {
         const $siEl = $('.' + settings.itemsOptions.highlightItemCss + ':visible'); // fixme
 
         if ($siEl.length !== 0 && $siEl.data('match') == 1) {
+            const rowHeight = settings.lineHeight + 1;
+            const index = parseInt($movingCard.data('index'));
+            const item = settings.itemsOptions.items[index];
+            const offsetInMinutes = 60 / settings.rowsPerHour * ($movingCard[0].offsetTop / rowHeight); // <<== FIXME 
+            const interval = settings.data[$siEl.parent().data('column')].workingTimeIntervals[$siEl.parent().data('item-index')];
+
+            settings.itemsOptions.onItemWillBeAssigned && settings.itemsOptions.onItemWillBeAssigned({ item, interval, offsetInMinutes });
+
             $movingCard
                 .detach()
                 .css({ top: $siEl[0].offsetTop, left: 0 })
@@ -92,13 +99,13 @@ const populateSkedulerItems = (settings) => {
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
 
-        $shifts.each(function () {
+        $shifts.each(function() {
             const $this = $(this);
             const elementBounding = this.getBoundingClientRect();
             const $el = $this.find('.' + settings.itemsOptions.highlightItemCss);
 
-            if (x > elementBounding.left && x < elementBounding.right
-                && y > elementBounding.top && y < elementBounding.bottom) {
+            if (x > elementBounding.left && x < elementBounding.right &&
+                y > elementBounding.top && y < elementBounding.bottom) {
 
                 const offsetTop = y - elementBounding.top;
                 const rowCount = (Math.floor(offsetTop / rowHeight) - 1);
@@ -108,7 +115,6 @@ const populateSkedulerItems = (settings) => {
                 );
 
                 const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME 
-                console.log($this.data('item-index'));
                 const interval = settings.data[$this.data('column')].workingTimeIntervals[$this.data('item-index')];
                 const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
 
@@ -126,7 +132,7 @@ const populateSkedulerItems = (settings) => {
         });
     };
 
-    const mouseDownOnCard = (event /*: MouseEvent */) => {
+    const mouseDownOnCard = (event /*: MouseEvent */ ) => {
         if (event.which !== 1) { return; }
 
         const $skedulerWrapper = $(`.${settings.skedulerWrapperCssClass}`);
@@ -134,11 +140,11 @@ const populateSkedulerItems = (settings) => {
 
         const $movingCard =
             $card.clone()
-                .data('index', $card.data('index'))
-                .addClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
-                .removeClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
-                .width($card.width())
-                .appendTo($skedulerWrapper);
+            .data('index', $card.data('index'))
+            .addClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
+            .removeClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
+            .width($card.width())
+            .appendTo($skedulerWrapper);
 
         //var bounce = $card[0].getBoundingClientRect();
         // fixme ^^^
@@ -151,8 +157,10 @@ const populateSkedulerItems = (settings) => {
         });
 
         operation = {
-            $card, $movingCard,
-            offsetX: event.offsetX, offsetY: event.offsetY
+            $card,
+            $movingCard,
+            offsetX: event.offsetX,
+            offsetY: event.offsetY
         };
 
         $card.hide();

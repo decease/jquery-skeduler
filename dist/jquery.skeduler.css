@@ -4,8 +4,7 @@
   flex-direction: row;
 }
 .skeduler-container {
-  margin-left: 400px;
-  flex: 8;
+  flex: 10;
   overflow-x: scroll;
 }
 .skeduler-container {
@@ -125,13 +124,10 @@
 }
 /* Skeduler items styles */
 .skeduler-items {
-  flex: 2;
+  flex: 3;
   align-self: stretch;
-  height: 100%;
   background-color: #e8e8e8;
-  position: fixed;
   z-index: 300;
-  width: 400px;
 }
 .si-header {
   text-align: center;

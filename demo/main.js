@@ -32,6 +32,11 @@ $(function() {
         return unsuccess;
     }
 
+    var onItemWillBeAssigned = function() {
+        alert('onItemWillBeAssigned');
+        console.log(arguments);
+    }
+
     var populate = function(data, itemCardTemplate, cardTemplate) {
         var skeduler = $("#skeduler-container").skeduler({
             rowsPerHour: 2,
@@ -46,7 +51,8 @@ $(function() {
                 containerSelector: "#skeduler-items",
                 itemCardTemplate: itemCardTemplate,
                 items: data.items,
-                matchFunc: matchFunc
+                matchFunc: matchFunc,
+                onItemWillBeAssigned: onItemWillBeAssigned
             }
         });
 

@@ -1,6 +1,5 @@
 {
-    "items": [
-        {
+    "items": [{
             "name": "Ben Johnson",
             "duration": 120,
             "interval": { "start": "8:00", "end": "10:00" }
@@ -28,12 +27,10 @@
     "tasks": [
 
     ],
-    "specialists": [
-        {
-            "id": 1, 
+    "specialists": [{
+            "id": 1,
             "name": "Ellie Wilson",
-            "workingTimeIntervals": [
-                {
+            "workingTimeIntervals": [{
                     "start": "8:30",
                     "end": "12:00"
                 },
@@ -44,79 +41,65 @@
             ]
         },
         {
-            "id": 2, 
+            "id": 2,
             "name": "Marie Wright",
-            "workingTimeIntervals": [
-                {
-                    "start": "6:00",
-                    "end": "15:00"
-                }
-            ]
+            "workingTimeIntervals": [{
+                "start": "6:00",
+                "end": "15:00"
+            }]
         },
         {
-            "id": 3, 
+            "id": 3,
             "name": "Amanda Cooper",
-            "workingTimeIntervals": [
-                {
-                    "start": "15:00",
-                    "end": "19:00"
-                }
-            ]
+            "workingTimeIntervals": [{
+                "start": "15:00",
+                "end": "19:00"
+            }]
         },
         {
-            "id": 4, 
+            "id": 4,
             "name": "Daniel Johnson",
-            "workingTimeIntervals": [
-                {
-                    "start": "10:00",
-                    "end": "14:00"
-                }
-            ]
+            "workingTimeIntervals": [{
+                "start": "10:00",
+                "end": "14:00"
+            }]
         },
         {
-            "id": 5, 
+            "id": 5,
             "name": "Alice Clarke",
-            "workingTimeIntervals": [
-                {
-                    "start": "7:30",
-                    "end": "21:00"
-                }
-            ]
+            "workingTimeIntervals": [{
+                "start": "7:30",
+                "end": "21:00"
+            }]
         },
         {
-            "id": 6, 
+            "id": 6,
             "name": "Edward Green",
-            "workingTimeIntervals": [ ]
+            "workingTimeIntervals": []
         },
         {
-            "id": 7, 
+            "id": 7,
             "name": "Sarah Jackson",
-            "workingTimeIntervals": [
-                {
-                    "start": "10:00",
-                    "end": "16:00"
-                }
-            ]
+            "workingTimeIntervals": [{
+                "start": "10:00",
+                "end": "16:00"
+            }]
         },
         {
-            "id": 8, 
+            "id": 8,
             "name": "Maria Rodrigues",
-            "workingTimeIntervals": [
-                {
-                    "start": "8:00",
-                    "end": "16:00"
-                }
-            ]
+            "workingTimeIntervals": [{
+                "start": "8:00",
+                "end": "16:00"
+            }]
         },
         {
-            "id": 9, 
+            "id": 9,
             "name": "Julie Wood",
-            "workingTimeIntervals": [
-                {
-                    "start": "16:00",
-                    "end": "20:00"
-                }
-            ]
+            "workingTimeIntervals": [{
+                "start": "16:00",
+                "end": "20:00"
+            }]
         }
     ]
 }
