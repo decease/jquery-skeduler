@@ -1,31 +1,37 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="dist/jquery.skeduler.css" type="text/css">
-  <link rel="stylesheet" href="demo/demo.css" type="text/css">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="dist/jquery.skeduler.css" type="text/css">
+    <link rel="stylesheet" href="demo/demo.css" type="text/css">
 
-  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-    crossorigin="anonymous"></script>
-  <script src="dist/jquery.skeduler.js"></script>
-  <script src="demo/main.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="dist/jquery.skeduler.js"></script>
+    <script src="demo/main.js"></script>
 </head>
 
 <body>
-  <div>
-    <h1 class="header">jQuery Skeduler 2</h1>
-  </div>
-  <div>Rows per hour:
-    <select name="cars">
-      <option value="volvo">Volvo</option>
-      <option value="saab">Saab</option>
-      <option value="fiat">Fiat</option>
-    </select>
-  </div>
-  <div class="skeduler-wrapper">
-    <div id="skeduler-items"></div>
-    <div id="skeduler-container"></div>
-  </div>
+    <div>
+        <h1 class="header">jQuery Skeduler 2</h1>
+    </div>
+    <div>
+        <p>
+            <span>Rows per hour:</span>
+            <select name="rows">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="4">4</option>
+            </select>
+        </p>
+        <p>
+            <span>Resize all columns</span>
+            <input name="resizeAllColumns" type="checkbox" checked />
+        </p>
+    </div>
+    <div class="skeduler-wrapper">
+        <div id="skeduler-items"></div>
+        <div id="skeduler-container"></div>
+    </div>
 </body>
 
 </html>
