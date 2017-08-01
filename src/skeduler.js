@@ -10,18 +10,32 @@ class Skeduler {
         this.$headerContainer = null;
         this.$scheduleEl = null
         this.operation = null;
+        this.resizeAllColumns = true;
 
         if (this.settings.debug) {
             console.time('skeduler');
         }
 
-        this.populate();
-        if (this.settings.itemsOptions.enabled) {
-            populateSkedulerItems(this.settings);
-        }
+        this.refresh();
 
         if (this.settings.debug) {
             console.timeEnd('skeduler');
+        }
+    }
+
+    setRowsPerHour(rowsPerHour) {
+        this.settings.rowsPerHour = rowsPerHour;
+        this.refresh();
+    }
+
+    setResizeAllColumns(resizeAllColumns) {
+        this.resizeAllColumns = resizeAllColumns;
+    }
+
+    refresh() {
+        this.populate();
+        if (this.settings.itemsOptions.enabled) {
+            populateSkedulerItems(this.settings);
         }
     }
 
@@ -29,9 +43,9 @@ class Skeduler {
         this.$container.empty();
         this.$container.addClass(this.settings.containerCssClass);
 
-        const headers = this.settings.headers
-            ? this.settings.headers
-            : this.settings.data.map(this.settings.getHeader);
+        const headers = this.settings.headers ?
+            this.settings.headers :
+            this.settings.data.map(this.settings.getHeader);
 
         const div = $('<div></div>');
 
@@ -133,8 +147,8 @@ class Skeduler {
     }
 
     /**
-       * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
-       */
+     * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
+     */
     toTimeString(value) {
         return (value < 10 ? '0' : '') + Math.ceil(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
     }
@@ -163,14 +177,14 @@ class Skeduler {
      * @param {*string} time - time in format like '13:50', '11:00', '14'
      */
     parseTime(time) {
-        return /\d{2}\:\d{2}/.test(time)
-            ? parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60
-            : parseInt(time);
+        return /\d{1,2}\:\d{2}/.test(time) ?
+            parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60 :
+            parseInt(time);
     }
 
     /**
-    * Render card template
-    */
+     * Render card template
+     */
     renderInnerCardContent(task) {
         const template = this.settings.cardTemplate;
         const result = compileTemplate(template)(task);
@@ -203,6 +217,7 @@ class Skeduler {
         intervals.forEach((interval, index) => {
             const innerContent = div.clone().text(this.settings.notAllocatedLabel);
             const top = this.getCardTopPosition(interval.start) + 2;
+            console.log('top for start: ', top, interval.start)
             const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;
 
@@ -240,14 +255,20 @@ class Skeduler {
         if (!this.operation) { return; }
 
         // Determine the delta change between start and new mouse position, as a percentage of the table width
-        let difference = (event.pageX - op.startX);// / this.$scheduleEl.width() * 100;
+        let difference = (event.pageX - op.startX); // / this.$scheduleEl.width() * 100;
         if (difference === 0) {
             return;
         }
 
         let columnNumber = op.columnNumber;
         let width = op.width + difference;
-        this.updateColumnWidth(columnNumber, width.toFixed(2));
+        if (this.resizeAllColumns) {
+            for (let i = 0; i < this.settings.data.length; i++) {
+                this.updateColumnWidth(i, width.toFixed(2));
+            }
+        } else {
+            this.updateColumnWidth(columnNumber, width.toFixed(2));
+        }
     }
 
     onPointerDown(event) {

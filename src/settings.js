@@ -43,6 +43,7 @@ const defaultSettings = {
         itemCardCssClass: 'si-card',
         itemCardTemplate: '<div>${duration}</div>',
         items: [],
+        title: 'Items',
         matchFunc: () => { return { match: true } }
     }
 };
