@@ -40,12 +40,12 @@
     "tasks": [
         {
             "column": 0,
-            "start": "10:30",
+            "start": "10:00",
             "item": {
                 "name": "Liza March",
-                "duration": 90,
+                "duration": 120,
                 "interval": {
-                    "start": "10:30",
+                    "start": "10:00",
                     "end": "12:00"
                 }
             }

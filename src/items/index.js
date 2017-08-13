@@ -9,8 +9,8 @@ const getItemDivs = (settings) => {
         time: (item) => item.interval ? `${item.interval.start} to ${item.interval.end}` : ''
     });
 
-    return items.map((item, index) => $div.clone()
-        .data('index', index)
+    return items.map((item) => $div.clone()
+        .data('index', item.index)
         .html(template(item))
     );
 }
@@ -45,7 +45,8 @@ const populateSkedulerItems = (settings) => {
         if ($siEl.length !== 0 && $siEl.data('match') == 1) {
             const rowHeight = settings.lineHeight + 1;
             const index = parseInt($movingCard.data('index'));
-            const item = settings.itemsOptions.items[index];
+            const isAssigned = !!$movingCard.data('assigned');
+            const item = isAssigned ? settings.tasks[index].item : settings.itemsOptions.items[index];
             const offsetInMinutes = 60 / settings.rowsPerHour * ($movingCard[0].offsetTop / rowHeight); // <<== FIXME 
             const interval = settings.data[$siEl.parent().data('column')].workingTimeIntervals[$siEl.parent().data('item-index')];
 
@@ -56,6 +57,7 @@ const populateSkedulerItems = (settings) => {
                 .css({ top: $siEl[0].offsetTop, left: 0 })
                 .height($siEl[0].clientHeight)
                 .width('auto')
+                .data('assigned', 1)
                 .removeClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
                 .addClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
                 .appendTo($siEl.parent());
@@ -171,7 +173,7 @@ const populateSkedulerItems = (settings) => {
         event.preventDefault();
     };
 
-    $skedulerItemsEl.find('.' + settings.itemsOptions.itemCardCssClass).on('mousedown', mouseDownOnCard);
+    $('.' + settings.itemsOptions.itemCardCssClass).on('mousedown', mouseDownOnCard);
 }
 
 export default populateSkedulerItems;

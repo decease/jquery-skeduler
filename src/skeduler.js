@@ -35,6 +35,18 @@ class Skeduler {
     }
 
     refresh() {
+        this.settings.itemsOptions.items = this.settings.itemsOptions.items && this.settings.itemsOptions.items.map(
+            (item, index) => Object.assign({}, {index}, item)
+        ) || [];
+        this.settings.tasks = this.settings.tasks && this.settings.tasks.map(
+            (task, index) => {
+                task.item = Object.assign({}, {index}, task.item);
+                return task;
+            }
+        ) || [];
+
+        console.log(this.settings.itemsOptions.items, this.settings.tasks)
+
         this.populate();
         if (this.settings.itemsOptions.enabled) {
             populateSkedulerItems(this.settings);
@@ -181,6 +193,8 @@ class Skeduler {
                 .addClass(`${this.settings.itemsOptions.itemCardCssClass}`)
                 .addClass(`${this.settings.itemsOptions.itemCardCssClass}-pinned`)
                 .width('auto')
+                .data('index', task.item.index)
+                .data('assigned', 1)
                 .appendTo(placeholder);
         }, this);
     }
