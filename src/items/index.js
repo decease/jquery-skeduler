@@ -97,11 +97,12 @@ const populateSkedulerItems = (settings) => {
         const rowsPerHour = settings.rowsPerHour;
 
         const index = parseInt($movingCard.data('index'));
-        const item = settings.items[index];
+        const isAssigned = !!$movingCard.data('assigned');
+        const item = isAssigned ? settings.tasks[index].item : settings.items[index];
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
 
-        $shifts.each(function() {
+        $shifts.each(function () {
             const $this = $(this);
             const elementBounding = this.getBoundingClientRect();
             const $el = $this.find('.' + settings.itemsOptions.highlightItemCss);
@@ -134,7 +135,7 @@ const populateSkedulerItems = (settings) => {
         });
     };
 
-    const mouseDownOnCard = (event /*: MouseEvent */ ) => {
+    const mouseDownOnCard = (event /*: MouseEvent */) => {
         if (event.which !== 1) { return; }
 
         const $skedulerWrapper = $(`.${settings.skedulerWrapperCssClass}`);
@@ -142,11 +143,12 @@ const populateSkedulerItems = (settings) => {
 
         const $movingCard =
             $card.clone()
-            .data('index', $card.data('index'))
-            .addClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
-            .removeClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
-            .width($card.width())
-            .appendTo($skedulerWrapper);
+                .data('index', $card.data('index'))
+                .data('assigned', $card.data('assigned'))
+                .addClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
+                .removeClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
+                .width($card.width())
+                .appendTo($skedulerWrapper);
 
         //var bounce = $card[0].getBoundingClientRect();
         // fixme ^^^
@@ -164,6 +166,11 @@ const populateSkedulerItems = (settings) => {
             offsetX: event.offsetX,
             offsetY: event.offsetY
         };
+
+        const index = parseInt($card.data('index'));
+        const isAssigned = !!$movingCard.data('assigned');
+        const item = isAssigned ? settings.tasks[index].item : settings.items[index];
+        console.log($movingCard.data('assigned'), item);
 
         $card.hide();
 
