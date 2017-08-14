@@ -45,10 +45,14 @@ const populateSkedulerItems = (settings) => {
         if ($siEl.length !== 0 && $siEl.data('match') == 1) {
             const rowHeight = settings.lineHeight + 1;
             const index = parseInt($movingCard.data('index'));
+            const column = parseInt($siEl.parent().data('column'));
             const isAssigned = !!$movingCard.data('assigned');
             const item = isAssigned ? settings.tasks[index].item : settings.items[index];
-            const offsetInMinutes = 60 / settings.rowsPerHour * ($movingCard[0].offsetTop / rowHeight); // <<== FIXME 
-            const interval = settings.data[$siEl.parent().data('column')].availableIntervals[$siEl.parent().data('item-index')];
+            let offsetInMinutes = (60 / settings.rowsPerHour * ($movingCard[0].offsetTop / rowHeight)); // <<== FIXME 
+            console.log(offsetInMinutes); // TODO: << need for task.start 
+            //Math.floor(offsetInMinutes % 60)
+
+            const interval = settings.data[column].availableIntervals[$siEl.parent().data('item-index')];
 
             settings.itemsOptions.onItemWillBeAssigned && settings.itemsOptions.onItemWillBeAssigned({ item, interval, offsetInMinutes });
 
@@ -62,7 +66,13 @@ const populateSkedulerItems = (settings) => {
                 .addClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
                 .appendTo($siEl.parent());
 
-            $movingCard.on('mousedown', mouseDownOnCard);
+            //$movingCard.on('mousedown', mouseDown);
+            settings.tasks.push({
+                column,
+                start: "10:00", // TODO: fixit
+                item
+            });
+            settings.itemsOptions.onItemDidAssigned && settings.itemsOptions.onItemDidAssigned({ item, interval, offsetInMinutes });
         } else {
             $movingCard.remove();
             $card.show();
@@ -135,7 +145,7 @@ const populateSkedulerItems = (settings) => {
         });
     };
 
-    const mouseDownOnCard = (event /*: MouseEvent */) => {
+    const mouseDown = (event /*: MouseEvent */) => {
         if (event.which !== 1) { return; }
 
         const $skedulerWrapper = $(`.${settings.skedulerWrapperCssClass}`);
@@ -180,7 +190,7 @@ const populateSkedulerItems = (settings) => {
         event.preventDefault();
     };
 
-    $('.' + settings.itemsOptions.itemCardCssClass).on('mousedown', mouseDownOnCard);
+    $('.' + settings.itemsOptions.itemCardCssClass).on('mousedown', mouseDown);
 }
 
 export default populateSkedulerItems;

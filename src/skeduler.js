@@ -126,6 +126,10 @@ class Skeduler {
         }
     }
 
+    tasks() {
+        return this.settings.tasks;
+    }
+
     configureResizing() {
         const skedulerElResizableHandler = div(this.settings.resizableHandlerCssClass);
 
@@ -143,7 +147,7 @@ class Skeduler {
                 .appendTo(skedulerElResizableHandler)
         });
 
-        skedulerElResizableHandler.on('mousedown', '.' + this.settings.resizableSliderCssClass, this.onPointerDown.bind(this));
+        skedulerElResizableHandler.on('mousedown', '.' + this.settings.resizableSliderCssClass, this.onResizePointerDown.bind(this));
     }
 
     appendAvailableInterval(placeholder, intervals, column) {
@@ -197,7 +201,7 @@ class Skeduler {
         }, this);
     }
 
-    onPointerUp(event) {
+    onResizePointerUp(event) {
         let op = this.operation;
         if (!this.operation) { return; }
 
@@ -207,7 +211,7 @@ class Skeduler {
         this.operation = null;
     }
 
-    onPointerMove(event) {
+    onResizePointerMove(event) {
         let op = this.operation;
         if (!this.operation) { return; }
 
@@ -228,7 +232,7 @@ class Skeduler {
         }
     }
 
-    onPointerDown(event) {
+    onResizePointerDown(event) {
         // Only applies to left-click dragging
         if (event.which !== 1) { return; }
 
@@ -236,7 +240,7 @@ class Skeduler {
         // Probably gobbled up by user mousing out the window then releasing.
         // We'll simulate a pointerup here prior to it
         if (this.operation) {
-            this.onPointerUp(event);
+            this.Resize(event);
         }
 
         let $currentGrip = $(event.currentTarget);
@@ -253,8 +257,8 @@ class Skeduler {
             width: leftWidth
         };
 
-        this.$ownerDocument.on('mousemove', this.onPointerMove.bind(this));
-        this.$ownerDocument.on('mouseup', this.onPointerUp.bind(this));
+        this.$ownerDocument.on('mousemove', this.onResizePointerMove.bind(this));
+        this.$ownerDocument.on('mouseup', this.Resize.bind(this));
 
         event.preventDefault();
     }

@@ -1,4 +1,6 @@
 $(function() {
+    var skeduler;
+
     var toMinutes = function(interval) {
         return parseInt(interval.split(':')[0]) * 60 + parseInt(interval.split(':')[1]);
     }
@@ -30,12 +32,19 @@ $(function() {
     }
 
     var onItemWillBeAssigned = function() {
-        alert('onItemWillBeAssigned');
+        console.log('skeduler :: onItemWillBeAssigned');
+        console.log(skeduler.tasks());
+        console.log(arguments);
+    }
+
+    var onItemDidAssigned = function() {
+        console.log('skeduler :: onItemDidAssigned');
+        console.log(skeduler.tasks());
         console.log(arguments);
     }
 
     var populate = function(data, itemCardTemplate, cardTemplate) {
-        var skeduler = $("#skeduler-container").skeduler({
+        skeduler = $("#skeduler-container").skeduler({
             debug: true,
             rowsPerHour: 2,
             lineHeight: 20,
