@@ -4,14 +4,13 @@ const defaultSettings = {
     tasks: [],      // Task[] - Array of tasks. Required fields: 
                     // id: number, startTime: number, duration: number, column: number
 
+    items: [],      // Item[] - Array of not-assingned tasks
+
     notAllocatedLabel: 'Not allocated',
 
     // Card template - Inner content of task card. 
     // You're able to use ${key} inside template, where key is any property from task.
     cardTemplate: '<div>${id}</div>',
-
-    // OnClick event handler
-    onClick: function (e, task) { },
 
     // Css classes
     skedulerWrapperCssClass: 'skeduler-wrapper',
@@ -19,7 +18,7 @@ const defaultSettings = {
     headerContainerCssClass: 'skeduler-headers',
     schedulerContainerCssClass: 'skeduler-main',
     taskPlaceholderCssClass: 'skeduler-task-placeholder',
-    workingIntervalPlaceholderCssClass: 'skeduler-interval-placeholder',
+    availableIntervalPlaceholderCssClass: 'skeduler-interval-placeholder',
     cellCssClass: 'skeduler-cell',
     resizableHandlerCssClass: 'resizable-handler',
     resizableSliderCssClass: 'resizable-slider',
@@ -33,7 +32,7 @@ const defaultSettings = {
 
     columnResizeEnabled: true, // is columns resizable
 
-    debug: true,
+    debug: false,
 
     itemsOptions: {
         enabled: false,
@@ -42,7 +41,6 @@ const defaultSettings = {
         containerSelector: "#skeduler-items",
         itemCardCssClass: 'si-card',
         itemCardTemplate: '<div>${duration}</div>',
-        items: [],
         title: 'Items',
         matchFunc: () => { return { match: true } }
     }

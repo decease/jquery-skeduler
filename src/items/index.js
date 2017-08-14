@@ -4,7 +4,7 @@ const div = (cssClass) => $('<div></div>').addClass(cssClass);
 
 const getItemDivs = (settings) => {
     const $div = div(settings.itemsOptions.itemCardCssClass);
-    const items = settings.itemsOptions.items;
+    const items = settings.items;
     const template = compileTemplate(settings.itemsOptions.itemCardTemplate, {
         time: (item) => item.interval ? `${item.interval.start} to ${item.interval.end}` : ''
     });
@@ -20,7 +20,7 @@ const populateSkedulerItems = (settings) => {
         .empty()
         .addClass(settings.itemsOptions.itemsCssClass);
     const $ownerDocument = $($skedulerItemsEl[0].ownerDocument);
-    const $shifts = $('.' + settings.workingIntervalPlaceholderCssClass + ' > div');
+    const $shifts = $('.' + settings.availableIntervalPlaceholderCssClass + ' > div');
 
     const $headerDiv = div()
         .html('<h1 class="si-header">' + settings.itemsOptions.title + '</h1>')
@@ -46,9 +46,9 @@ const populateSkedulerItems = (settings) => {
             const rowHeight = settings.lineHeight + 1;
             const index = parseInt($movingCard.data('index'));
             const isAssigned = !!$movingCard.data('assigned');
-            const item = isAssigned ? settings.tasks[index].item : settings.itemsOptions.items[index];
+            const item = isAssigned ? settings.tasks[index].item : settings.items[index];
             const offsetInMinutes = 60 / settings.rowsPerHour * ($movingCard[0].offsetTop / rowHeight); // <<== FIXME 
-            const interval = settings.data[$siEl.parent().data('column')].workingTimeIntervals[$siEl.parent().data('item-index')];
+            const interval = settings.data[$siEl.parent().data('column')].availableIntervals[$siEl.parent().data('item-index')];
 
             settings.itemsOptions.onItemWillBeAssigned && settings.itemsOptions.onItemWillBeAssigned({ item, interval, offsetInMinutes });
 
@@ -97,7 +97,7 @@ const populateSkedulerItems = (settings) => {
         const rowsPerHour = settings.rowsPerHour;
 
         const index = parseInt($movingCard.data('index'));
-        const item = settings.itemsOptions.items[index];
+        const item = settings.items[index];
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
 
@@ -117,7 +117,7 @@ const populateSkedulerItems = (settings) => {
                 );
 
                 const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME 
-                const interval = settings.data[$this.data('column')].workingTimeIntervals[$this.data('item-index')];
+                const interval = settings.data[$this.data('column')].availableIntervals[$this.data('item-index')];
                 const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
 
                 $el.css({ top: top })

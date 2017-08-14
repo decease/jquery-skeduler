@@ -35,7 +35,7 @@ class Skeduler {
     }
 
     refresh() {
-        this.settings.itemsOptions.items = this.settings.itemsOptions.items && this.settings.itemsOptions.items.map(
+        this.settings.items = this.settings.items && this.settings.items.map(
             (item, index) => Object.assign({}, {index}, item)
         ) || [];
         this.settings.tasks = this.settings.tasks && this.settings.tasks.map(
@@ -44,8 +44,6 @@ class Skeduler {
                 return task;
             }
         ) || [];
-
-        console.log(this.settings.itemsOptions.items, this.settings.tasks)
 
         this.populate();
         if (this.settings.itemsOptions.enabled) {
@@ -101,12 +99,12 @@ class Skeduler {
         for (let j = 0; j < headers.length; j++) {
             const el = gridColumnElement.clone();
 
-            // fixme [workingTimeIntervals must not use index]
-            const workingIntervalsPlaceholder = div(this.settings.workingIntervalPlaceholderCssClass);
-            const intervals = this.settings.data[j].workingTimeIntervals;
-            this.appendAvailableInterval(workingIntervalsPlaceholder, intervals, j);
+            // fixme [availableIntervals must not use index]
+            const availableIntervalsPlaceholder = div(this.settings.availableIntervalPlaceholderCssClass);
+            const intervals = this.settings.data[j].availableIntervals;
+            this.appendAvailableInterval(availableIntervalsPlaceholder, intervals, j);
 
-            el.prepend(workingIntervalsPlaceholder);
+            el.prepend(availableIntervalsPlaceholder);
             el.appendTo(scheduleBodyEl);
 
             this.updateColumnWidth(j, this.settings.columnWidth);

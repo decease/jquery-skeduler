@@ -17,13 +17,10 @@ $(function() {
             var itemStartInMinusets = toMinutes(item.interval.start);
             var itemEndInMinusets = toMinutes(item.interval.end);
 
-            console.log('interval', start, end);
             return itemStartInMinusets == start && itemEndInMinusets == end ?
                 success :
                 unsuccess;
         } else {
-            console.log('duration', item.duration, intervalEndInMinusets, intervalStartInMinusets, intervalEndInMinusets - intervalStartInMinusets);
-
             return item.duration <= intervalEndInMinusets - intervalStartInMinusets ?
                 success :
                 unsuccess;
@@ -39,18 +36,18 @@ $(function() {
 
     var populate = function(data, itemCardTemplate, cardTemplate) {
         var skeduler = $("#skeduler-container").skeduler({
+            debug: true,
             rowsPerHour: 2,
             lineHeight: 20,
             getHeader: item => item.name,
             data: data.specialists,
             tasks: data.tasks,
+            items: data.items,
             cardTemplate: cardTemplate,
-            onClick: function(e, t) { console.log(e, t); },
             itemsOptions: {
                 enabled: true,
                 containerSelector: "#skeduler-items",
                 itemCardTemplate: itemCardTemplate,
-                items: data.items,
                 matchFunc: matchFunc,
                 onItemWillBeAssigned: onItemWillBeAssigned
             }

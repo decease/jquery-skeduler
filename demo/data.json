@@ -67,7 +67,7 @@
         {
             "id": 1,
             "name": "Ellie Wilson",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "8:30",
                     "end": "12:00"
@@ -81,7 +81,7 @@
         {
             "id": 2,
             "name": "Marie Wright",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "6:00",
                     "end": "15:00"
@@ -91,7 +91,7 @@
         {
             "id": 3,
             "name": "Amanda Cooper",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "15:00",
                     "end": "19:00"
@@ -101,7 +101,7 @@
         {
             "id": 4,
             "name": "Daniel Johnson",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "10:00",
                     "end": "14:00"
@@ -111,7 +111,7 @@
         {
             "id": 5,
             "name": "Alice Clarke",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "7:30",
                     "end": "21:00"
@@ -121,12 +121,12 @@
         {
             "id": 6,
             "name": "Edward Green",
-            "workingTimeIntervals": []
+            "availableIntervals": []
         },
         {
             "id": 7,
             "name": "Sarah Jackson",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "10:00",
                     "end": "16:00"
@@ -136,7 +136,7 @@
         {
             "id": 8,
             "name": "Maria Rodrigues",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "8:00",
                     "end": "16:00"
@@ -146,7 +146,7 @@
         {
             "id": 9,
             "name": "Julie Wood",
-            "workingTimeIntervals": [
+            "availableIntervals": [
                 {
                     "start": "16:00",
                     "end": "20:00"
