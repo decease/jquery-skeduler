@@ -40,7 +40,7 @@ class Skeduler {
         ) || [];
         this.settings.tasks = this.settings.tasks && this.settings.tasks.map(
             (task, index) => {
-                task.item = Object.assign({}, {index}, task.item);
+                task.item = Object.assign({}, {index: index + this.settings.items.length}, task.item);
                 return task;
             }
         ) || [];

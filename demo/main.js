@@ -34,13 +34,13 @@ $(function() {
     var onItemWillBeAssigned = function() {
         console.log('skeduler :: onItemWillBeAssigned');
         console.log(skeduler.tasks());
-        console.log(arguments);
+        //console.log(arguments);
     }
 
     var onItemDidAssigned = function() {
         console.log('skeduler :: onItemDidAssigned');
         console.log(skeduler.tasks());
-        console.log(arguments);
+        //console.log(arguments);
     }
 
     var populate = function(data, itemCardTemplate, cardTemplate) {
@@ -58,7 +58,8 @@ $(function() {
                 containerSelector: "#skeduler-items",
                 itemCardTemplate: itemCardTemplate,
                 matchFunc: matchFunc,
-                onItemWillBeAssigned: onItemWillBeAssigned
+                onItemWillBeAssigned: onItemWillBeAssigned,
+                onItemDidAssigned: onItemDidAssigned
             }
         });
 

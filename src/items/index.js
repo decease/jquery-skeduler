@@ -16,6 +16,12 @@ const getItemDivs = (settings) => {
 }
 
 const populateSkedulerItems = (settings) => {
+    const getItem = (index, isAssigned) => {
+        return isAssigned
+            ? settings.tasks.filter(t => t.item.index === index)[0].item
+            : settings.items.filter(i => i.index === index)[0];
+    }
+
     const $skedulerItemsEl = $(settings.itemsOptions.containerSelector)
         .empty()
         .addClass(settings.itemsOptions.itemsCssClass);
@@ -47,7 +53,7 @@ const populateSkedulerItems = (settings) => {
             const index = parseInt($movingCard.data('index'));
             const column = parseInt($siEl.parent().data('column'));
             const isAssigned = !!$movingCard.data('assigned');
-            const item = isAssigned ? settings.tasks[index].item : settings.items[index];
+            const item = getItem(index, isAssigned);
             let offsetInMinutes = (60 / settings.rowsPerHour * ($movingCard[0].offsetTop / rowHeight)); // <<== FIXME 
             console.log(offsetInMinutes); // TODO: << need for task.start 
             //Math.floor(offsetInMinutes % 60)
@@ -66,12 +72,20 @@ const populateSkedulerItems = (settings) => {
                 .addClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
                 .appendTo($siEl.parent());
 
-            //$movingCard.on('mousedown', mouseDown);
-            settings.tasks.push({
-                column,
-                start: "10:00", // TODO: fixit
-                item
-            });
+            $movingCard.on('mousedown', mouseDown);
+
+            if (!isAssigned) {
+                settings.tasks.push({
+                    column,
+                    start: "10:00", // TODO: fixit
+                    item
+                });
+            } else {
+                let task = settings.tasks.find(t => t.item.index === index);
+                task.start = "10:00", // TODO: fixit
+                task.column = column;
+            }
+
             settings.itemsOptions.onItemDidAssigned && settings.itemsOptions.onItemDidAssigned({ item, interval, offsetInMinutes });
         } else {
             $movingCard.remove();
@@ -108,7 +122,7 @@ const populateSkedulerItems = (settings) => {
 
         const index = parseInt($movingCard.data('index'));
         const isAssigned = !!$movingCard.data('assigned');
-        const item = isAssigned ? settings.tasks[index].item : settings.items[index];
+        const item = getItem(index, isAssigned);
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
 
@@ -179,8 +193,7 @@ const populateSkedulerItems = (settings) => {
 
         const index = parseInt($card.data('index'));
         const isAssigned = !!$movingCard.data('assigned');
-        const item = isAssigned ? settings.tasks[index].item : settings.items[index];
-        console.log($movingCard.data('assigned'), item);
+        const item = getItem(index, isAssigned);
 
         $card.hide();
 
