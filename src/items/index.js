@@ -1,4 +1,5 @@
 import { compileTemplate } from '../template';
+import { parseTime, toTime } from '../utils';
 
 const div = (cssClass) => $('<div></div>').addClass(cssClass);
 
@@ -13,6 +14,13 @@ const getItemDivs = (settings) => {
         .data('index', item.index)
         .html(template(item))
     );
+}
+
+const findStartTime = (rowIndex, rowsPerHour, interval) => {
+    rowIndex = Math.max(0, rowIndex);
+    const hoursFromTop = rowIndex / rowsPerHour;
+
+    return toTime(hoursFromTop + parseTime(interval.start));
 }
 
 const populateSkedulerItems = (settings) => {
@@ -44,7 +52,7 @@ const populateSkedulerItems = (settings) => {
     const mouseUp = (event) => {
         if (operation == null) return;
 
-        const { $movingCard, $card } = operation;
+        const { $movingCard, $card, startTime } = operation;
 
         const $siEl = $('.' + settings.itemsOptions.highlightItemCss + ':visible'); // fixme
 
@@ -54,9 +62,7 @@ const populateSkedulerItems = (settings) => {
             const column = parseInt($siEl.parent().data('column'));
             const isAssigned = !!$movingCard.data('assigned');
             const item = getItem(index, isAssigned);
-            let offsetInMinutes = (60 / settings.rowsPerHour * ($movingCard[0].offsetTop / rowHeight)); // <<== FIXME 
-            console.log(offsetInMinutes); // TODO: << need for task.start 
-            //Math.floor(offsetInMinutes % 60)
+            let offsetInMinutes = parseTime(startTime) * 60;
 
             const interval = settings.data[column].availableIntervals[$siEl.parent().data('item-index')];
 
@@ -77,12 +83,12 @@ const populateSkedulerItems = (settings) => {
             if (!isAssigned) {
                 settings.tasks.push({
                     column,
-                    start: "10:00", // TODO: fixit
+                    start: startTime,
                     item
                 });
             } else {
                 let task = settings.tasks.find(t => t.item.index === index);
-                task.start = "10:00", // TODO: fixit
+                task.start = startTime,
                 task.column = column;
             }
 
@@ -135,15 +141,17 @@ const populateSkedulerItems = (settings) => {
                 y > elementBounding.top && y < elementBounding.bottom) {
 
                 const offsetTop = y - elementBounding.top;
-                const rowCount = (Math.floor(offsetTop / rowHeight) - 1);
+                const rowIndex = (Math.floor(offsetTop / rowHeight) - 1);
                 const top = Math.min(
-                    Math.max(0, rowCount * rowHeight),
+                    Math.max(0, rowIndex * rowHeight),
                     this.clientHeight - height
                 );
 
-                const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME 
+                const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME
                 const interval = settings.data[$this.data('column')].availableIntervals[$this.data('item-index')];
                 const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
+
+                operation.startTime = findStartTime(rowIndex, rowsPerHour, interval);
 
                 $el.css({ top: top })
                     .css('background-color', matchResult.color)

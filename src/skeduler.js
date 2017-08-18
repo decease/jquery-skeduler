@@ -1,6 +1,7 @@
 import { defaultSettings } from './settings';
 import populateSkedulerItems from './items';
 import { compileTemplate } from './template';
+import { parseTime } from './utils';
 
 const div = (cssClass) => $('<div></div>').addClass(cssClass);
 
@@ -154,10 +155,10 @@ class Skeduler {
         intervals.forEach((interval, index) => {
             const innerContent = div().text(this.settings.notAllocatedLabel);
             const top = this.getCardTopPosition(interval.start) + 2;
-            const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
+            const duration = parseTime(interval.end) - parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;
 
-            const skItemHightlightDiv = div('si-highlight-item').hide();
+            const skItemHightlightDiv = div(this.settings.itemsOptions.highlightItemCss).hide();
 
             const shiftDiv = div()
                 .attr({
@@ -294,7 +295,7 @@ class Skeduler {
     * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
     */
     toTimeString(value) {
-        return (value < 10 ? '0' : '') + Math.ceil(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
+        return (value < 10 ? '0' : '') + Math.floor(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
     }
 
     /**
@@ -312,21 +313,11 @@ class Skeduler {
      * startTime - in hours
      */
     getCardTopPosition(startTime, offsetTime) {
-        let startTimeInt = this.parseTime(startTime);
+        let startTimeInt = parseTime(startTime);
         if (offsetTime) {
-            startTimeInt -= this.parseTime(offsetTime);
+            startTimeInt -= parseTime(offsetTime);
         }
         return (this.settings.lineHeight + this.settings.borderWidth) * (startTimeInt * this.settings.rowsPerHour);
-    }
-
-    /**
-     * Parse time string and present it in hours (ex. '13:30' => 13.5)
-     * @param {*string} time - time in format like '13:50', '11:00', '14'
-     */
-    parseTime(time) {
-        return /\d{1,2}\:\d{2}/.test(time) ?
-            parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60 :
-            parseInt(time);
     }
 }
 
