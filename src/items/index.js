@@ -182,8 +182,9 @@ const populateSkedulerItems = (settings) => {
                     this.clientHeight - height
                 );
 
+                const column = +$this.data('column');
                 const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME
-                const interval = settings.data[$this.data('column')].availableIntervals[$this.data('item-index')];
+                const interval = settings.data[column].availableIntervals[$this.data('item-index')];
                 const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
 
                 operation.startTime = findStartTime(rowIndex, rowsPerHour, interval);
@@ -195,6 +196,19 @@ const populateSkedulerItems = (settings) => {
 
 
                 $el.data('match', +matchResult.match);
+
+                if (matchResult.match) {
+                    settings.tasks.filter(t => t.column == column).forEach(t => {
+                        const taskStart = parseTime(t.start);
+                        const movingTaskStart = parseTime(operation.startTime);
+
+                        if (!(taskStart >= movingTaskStart + item.duration / 60)
+                            && !(taskStart + t.item.duration / 60 <= movingTaskStart)) {
+                                // TODO t is a conflicted task
+                                console.log(t.item.name);
+                        }
+                    });
+                }
             } else {
                 $el.data('match', 0);
                 $el.hide();
