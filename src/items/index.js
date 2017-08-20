@@ -56,12 +56,31 @@ const populateSkedulerItems = (settings) => {
 
         const $siEl = $('.' + settings.itemsOptions.highlightItemCss + ':visible'); // fixme
 
-        if ($siEl.length !== 0 && $siEl.data('match') == 1) {
+        const index = parseInt($movingCard.data('index'));
+        const isAssigned = !!$movingCard.data('assigned');
+        const item = getItem(index, isAssigned);
+
+        if ($skedulerItemsContainerEl.data('selected') == 1) {
+            if (isAssigned) {
+                settings.tasks = settings.tasks.filter(t => t.item.index != index);
+                settings.items.push(item);
+            }
+
+            $movingCard
+                .detach()
+                .css({ top: 'auto', left: 'auto' })
+                .height('auto')
+                .width('auto')
+                .data('assigned', 0)
+                .removeClass(`${settings.itemsOptions.itemCardCssClass}-moving`)
+                .removeClass(`${settings.itemsOptions.itemCardCssClass}-pinned`)
+                .appendTo($skedulerItemsContainerEl);
+
+            $movingCard.on('mousedown', mouseDown);
+            $card.remove();
+        } else if ($siEl.length !== 0 && $siEl.data('match') == 1) {
             const rowHeight = settings.lineHeight + 1;
-            const index = parseInt($movingCard.data('index'));
             const column = parseInt($siEl.parent().data('column'));
-            const isAssigned = !!$movingCard.data('assigned');
-            const item = getItem(index, isAssigned);
             let offsetInMinutes = parseTime(startTime) * 60;
 
             const interval = settings.data[column].availableIntervals[$siEl.parent().data('item-index')];
@@ -79,6 +98,7 @@ const populateSkedulerItems = (settings) => {
                 .appendTo($siEl.parent());
 
             $movingCard.on('mousedown', mouseDown);
+            $card.remove();
 
             if (!isAssigned) {
                 settings.tasks.push({
@@ -89,7 +109,7 @@ const populateSkedulerItems = (settings) => {
             } else {
                 let task = settings.tasks.find(t => t.item.index === index);
                 task.start = startTime,
-                task.column = column;
+                    task.column = column;
             }
 
             settings.itemsOptions.onItemDidAssigned && settings.itemsOptions.onItemDidAssigned({ item, interval, offsetInMinutes });
@@ -99,6 +119,8 @@ const populateSkedulerItems = (settings) => {
         }
 
         $('.' + settings.itemsOptions.highlightItemCss).hide();
+        $skedulerItemsContainerEl.removeClass('highlighted');
+        $skedulerItemsContainerEl.data('selected', 0);
 
         operation = null;
         $ownerDocument.off('mousemove', mouseMove);
@@ -132,6 +154,19 @@ const populateSkedulerItems = (settings) => {
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
 
+        $skedulerItemsContainerEl.each(function () {
+            const $this = $(this);
+            const elementBounding = this.getBoundingClientRect();
+
+            if (x > elementBounding.left && x < elementBounding.right &&
+                y > elementBounding.top && y < elementBounding.bottom) {
+                $this.addClass('highlighted');
+                $skedulerItemsContainerEl.data('selected', 1);
+            } else {
+                $this.removeClass('highlighted');
+                $skedulerItemsContainerEl.data('selected', 0);
+            }
+        });
         $shifts.each(function () {
             const $this = $(this);
             const elementBounding = this.getBoundingClientRect();
