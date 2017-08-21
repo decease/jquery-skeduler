@@ -136,6 +136,11 @@
 }
 .si-container {
   position: relative;
+  padding: 10px 0;
+}
+.si-container.highlighted {
+  background: #bce8f1;
+  opacity: .3;
 }
 .si-card {
   cursor: move;

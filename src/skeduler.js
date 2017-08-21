@@ -1,6 +1,9 @@
 import { defaultSettings } from './settings';
 import populateSkedulerItems from './items';
 import { compileTemplate } from './template';
+import { parseTime } from './utils';
+
+const div = (cssClass) => $('<div></div>').addClass(cssClass);
 
 class Skeduler {
     constructor($container, options) {
@@ -33,6 +36,16 @@ class Skeduler {
     }
 
     refresh() {
+        this.settings.items = this.settings.items && this.settings.items.map(
+            (item, index) => Object.assign({}, {index}, item)
+        ) || [];
+        this.settings.tasks = this.settings.tasks && this.settings.tasks.map(
+            (task, index) => {
+                task.item = Object.assign({}, {index: index + this.settings.items.length}, task.item);
+                return task;
+            }
+        ) || [];
+
         this.populate();
         if (this.settings.itemsOptions.enabled) {
             populateSkedulerItems(this.settings);
@@ -47,28 +60,25 @@ class Skeduler {
             this.settings.headers :
             this.settings.data.map(this.settings.getHeader);
 
-        const div = $('<div></div>');
-
         // Add headers
-        this.$headerContainer = div.clone().addClass(this.settings.headerContainerCssClass);
+        this.$headerContainer = div(this.settings.headerContainerCssClass);
         headers.forEach((element) => {
-            div.clone()
-                .text(element)
+            div().text(element)
                 .appendTo(this.$headerContainer);
         }, this);
         this.$container.append(this.$headerContainer);
 
         // Add scheduler
-        this.$scheduleEl = div.clone().addClass(this.settings.schedulerContainerCssClass);
-        const scheduleTimelineEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-timeline');
-        const scheduleBodyEl = div.clone().addClass(this.settings.schedulerContainerCssClass + '-body');
+        this.$scheduleEl = div(this.settings.schedulerContainerCssClass);
+        const scheduleTimelineEl = div(this.settings.schedulerContainerCssClass + '-timeline');
+        const scheduleBodyEl = div(this.settings.schedulerContainerCssClass + '-body');
 
-        const gridColumnElement = div.clone();
+        const gridColumnElement = div();
 
         for (let i = 0; i < 24; i++) {
             // Populate timeline
             for (let j = 0; j < this.settings.rowsPerHour; j++) {
-                let timelineCell = div.clone()
+                let timelineCell = div()
                     .height(this.settings.lineHeight)
                     .addClass(j == this.settings.rowsPerHour - 1 ? "last" : "");
 
@@ -79,8 +89,7 @@ class Skeduler {
                 }
                 timelineCell.appendTo(scheduleTimelineEl);
 
-                div.clone()
-                    .addClass(this.settings.cellCssClass)
+                div(this.settings.cellCssClass)
                     .height(this.settings.lineHeight)
                     .addClass(j == this.settings.rowsPerHour - 1 ? "last" : "")
                     .appendTo(gridColumnElement);
@@ -91,16 +100,12 @@ class Skeduler {
         for (let j = 0; j < headers.length; j++) {
             const el = gridColumnElement.clone();
 
-            const tasksPlaceholder = div.clone().addClass(this.settings.taskPlaceholderCssClass);
-            this.appendTasks(tasksPlaceholder, this.settings.tasks.filter(t => t.column == j));
+            // fixme [availableIntervals must not use index]
+            const availableIntervalsPlaceholder = div(this.settings.availableIntervalPlaceholderCssClass);
+            const intervals = this.settings.data[j].availableIntervals;
+            this.appendAvailableInterval(availableIntervalsPlaceholder, intervals, j);
 
-            // fixme [workingTimeIntervals must not use index]
-            const workingIntervalsPlaceholder = div.clone().addClass(this.settings.workingIntervalPlaceholderCssClass);
-            const intervals = this.settings.data[j].workingTimeIntervals;
-            this.appendAvailableInterval(workingIntervalsPlaceholder, intervals, j);
-
-            el.prepend(tasksPlaceholder);
-            el.prepend(workingIntervalsPlaceholder);
+            el.prepend(availableIntervalsPlaceholder);
             el.appendTo(scheduleBodyEl);
 
             this.updateColumnWidth(j, this.settings.columnWidth);
@@ -122,11 +127,12 @@ class Skeduler {
         }
     }
 
-    configureResizing() {
-        const div = $('<div></div>');
+    tasks() {
+        return this.settings.tasks;
+    }
 
-        const skedulerElResizableHandler = div.clone()
-            .addClass(this.settings.resizableHandlerCssClass);
+    configureResizing() {
+        const skedulerElResizableHandler = div(this.settings.resizableHandlerCssClass);
 
         this.$container.prepend(skedulerElResizableHandler);
 
@@ -135,112 +141,68 @@ class Skeduler {
         const resizableSliderHeight = this.$scheduleEl.height() + this.$headerContainer.height();
         let index = 0;
         this.$headerContainer.find('div').each((_, el) => {
-            div.clone()
-                .addClass(this.settings.resizableSliderCssClass)
+            div(this.settings.resizableSliderCssClass)
                 .css('left', el.offsetLeft + el.clientWidth)
                 .height(resizableSliderHeight)
                 .data('column-id', index++)
                 .appendTo(skedulerElResizableHandler)
         });
 
-        skedulerElResizableHandler.on('mousedown', '.' + this.settings.resizableSliderCssClass, this.onPointerDown.bind(this));
-    }
-
-    /**
-     * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
-     */
-    toTimeString(value) {
-        return (value < 10 ? '0' : '') + Math.ceil(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
-    }
-
-    /**
-     * Return height of task card based on duration of the task
-     * duration - in hours
-     */
-    getCardHeight(duration) {
-        const durationInMinutes = duration * 60;
-        const heightOfMinute = (this.settings.lineHeight + this.settings.borderWidth) * this.settings.rowsPerHour / 60;
-        return Math.ceil(durationInMinutes * heightOfMinute);
-    }
-
-    /**
-     * Return top offset of task card based on start time of the task
-     * startTime - in hours
-     */
-    getCardTopPosition(startTime) {
-        const startTimeInt = this.parseTime(startTime);
-        return (this.settings.lineHeight + this.settings.borderWidth) * (startTimeInt * this.settings.rowsPerHour);
-    }
-
-    /**
-     * Parse time string and present it in hours (ex. '13:30' => 13.5)
-     * @param {*string} time - time in format like '13:50', '11:00', '14'
-     */
-    parseTime(time) {
-        return /\d{1,2}\:\d{2}/.test(time) ?
-            parseInt(time.split(':')[0]) + parseInt(time.split(':')[1]) / 60 :
-            parseInt(time);
-    }
-
-    /**
-     * Render card template
-     */
-    renderInnerCardContent(task) {
-        const template = this.settings.cardTemplate;
-        const result = compileTemplate(template)(task);
-
-        return $(result);
-    }
-
-    /** 
-     * Generate task cards
-     */
-    appendTasks(placeholder, tasks) {
-        tasks.forEach((task) => {
-            var innerContent = this.renderInnerCardContent(task);
-            var top = this.getCardTopPosition(task.startTime);
-            var height = this.getCardHeight(task.duration);
-
-            var card = $('<div></div>')
-                .attr({
-                    style: 'top: ' + top + 'px; height: ' + height + 'px',
-                    title: this.toTimeString(task.startTime) + ' - ' + this.toTimeString(task.startTime + task.duration)
-                });
-            card.on('click', (e) => { this.settings.onClick && this.settings.onClick(e, task) });
-            card.append(innerContent)
-                .appendTo(placeholder);
-        }, this);
+        skedulerElResizableHandler.on('mousedown', '.' + this.settings.resizableSliderCssClass, this.onResizePointerDown.bind(this));
     }
 
     appendAvailableInterval(placeholder, intervals, column) {
-        const div = $('<div></div>');
         intervals.forEach((interval, index) => {
-            const innerContent = div.clone().text(this.settings.notAllocatedLabel);
+            const innerContent = div().text(this.settings.notAllocatedLabel);
             const top = this.getCardTopPosition(interval.start) + 2;
-            console.log('top for start: ', top, interval.start)
-            const duration = this.parseTime(interval.end) - this.parseTime(interval.start);
+            const duration = parseTime(interval.end) - parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;
 
-            const skItemHightlightDiv = div.clone()
-                .addClass('si-highlight-item')
-                .hide();
+            const skItemHightlightDiv = div(this.settings.itemsOptions.highlightItemCss).hide();
 
-            const card = div.clone()
+            const shiftDiv = div()
                 .attr({
                     style: 'top: ' + top + 'px; height: ' + height + 'px'
                 });
 
-            card
+            shiftDiv
                 .data('column', column)
                 .data('item-index', index)
                 .append(innerContent)
                 .append(skItemHightlightDiv)
                 .appendTo(placeholder);
 
+            this.appendTasks(
+                shiftDiv,
+                interval.start,
+                this.settings.tasks.filter(t => t.column == column));
+            // TODO: ^^^ filter by shift interval too
+
         }, this);
     }
 
-    onPointerUp(event) {
+    /** 
+     * Generate task cards
+     */
+    appendTasks(placeholder, intervalStart, tasks) {
+        tasks.forEach((task) => {
+            let top = this.getCardTopPosition(task.start, intervalStart);
+            let height = this.getCardHeight(task.item.duration / 60);
+
+            this.getItemDiv(task.item)
+                .attr({
+                    style: 'top: ' + top + 'px; height: ' + height + 'px'
+                })
+                .addClass(`${this.settings.itemsOptions.itemCardCssClass}`)
+                .addClass(`${this.settings.itemsOptions.itemCardCssClass}-pinned`)
+                .width('auto')
+                .data('index', task.item.index)
+                .data('assigned', 1)
+                .appendTo(placeholder);
+        }, this);
+    }
+
+    onResizePointerUp(event) {
         let op = this.operation;
         if (!this.operation) { return; }
 
@@ -250,7 +212,7 @@ class Skeduler {
         this.operation = null;
     }
 
-    onPointerMove(event) {
+    onResizePointerMove(event) {
         let op = this.operation;
         if (!this.operation) { return; }
 
@@ -271,7 +233,7 @@ class Skeduler {
         }
     }
 
-    onPointerDown(event) {
+    onResizePointerDown(event) {
         // Only applies to left-click dragging
         if (event.which !== 1) { return; }
 
@@ -279,7 +241,7 @@ class Skeduler {
         // Probably gobbled up by user mousing out the window then releasing.
         // We'll simulate a pointerup here prior to it
         if (this.operation) {
-            this.onPointerUp(event);
+            this.Resize(event);
         }
 
         let $currentGrip = $(event.currentTarget);
@@ -296,8 +258,8 @@ class Skeduler {
             width: leftWidth
         };
 
-        this.$ownerDocument.on('mousemove', this.onPointerMove.bind(this));
-        this.$ownerDocument.on('mouseup', this.onPointerUp.bind(this));
+        this.$ownerDocument.on('mousemove', this.onResizePointerMove.bind(this));
+        this.$ownerDocument.on('mouseup', this.Resize.bind(this));
 
         event.preventDefault();
     }
@@ -318,6 +280,44 @@ class Skeduler {
                 $el.css('left', left - diff);
             }
         });
+    }
+
+    getItemDiv(item) {
+        const $div = div(this.settings.itemsOptions.itemCardCssClass);
+        const template = compileTemplate(this.settings.itemsOptions.itemCardTemplate, {
+            time: (item) => item.interval ? `${item.interval.start} to ${item.interval.end}` : ''
+        });
+
+        return div().html(template(item));
+    }
+
+    /**
+    * Convert double value of hours to zero-preposited string with 30 or 00 value of minutes
+    */
+    toTimeString(value) {
+        return (value < 10 ? '0' : '') + Math.floor(value) + (Math.ceil(value) > Math.floor(value) ? ':30' : ':00');
+    }
+
+    /**
+     * Return height of task card based on duration of the task
+     * duration - in hours
+     */
+    getCardHeight(duration) {
+        const durationInMinutes = duration * 60;
+        const heightOfMinute = (this.settings.lineHeight + this.settings.borderWidth) * this.settings.rowsPerHour / 60;
+        return Math.ceil(durationInMinutes * heightOfMinute);
+    }
+
+    /**
+     * Return top offset of task card based on start time of the task
+     * startTime - in hours
+     */
+    getCardTopPosition(startTime, offsetTime) {
+        let startTimeInt = parseTime(startTime);
+        if (offsetTime) {
+            startTimeInt -= parseTime(offsetTime);
+        }
+        return (this.settings.lineHeight + this.settings.borderWidth) * (startTimeInt * this.settings.rowsPerHour);
     }
 }
 

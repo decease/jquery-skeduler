@@ -1,4 +1,6 @@
 $(function() {
+    var skeduler;
+
     var toMinutes = function(interval) {
         return parseInt(interval.split(':')[0]) * 60 + parseInt(interval.split(':')[1]);
     }
@@ -17,13 +19,10 @@ $(function() {
             var itemStartInMinusets = toMinutes(item.interval.start);
             var itemEndInMinusets = toMinutes(item.interval.end);
 
-            console.log('interval', start, end);
             return itemStartInMinusets == start && itemEndInMinusets == end ?
                 success :
                 unsuccess;
         } else {
-            console.log('duration', item.duration, intervalEndInMinusets, intervalStartInMinusets, intervalEndInMinusets - intervalStartInMinusets);
-
             return item.duration <= intervalEndInMinusets - intervalStartInMinusets ?
                 success :
                 unsuccess;
@@ -33,26 +32,34 @@ $(function() {
     }
 
     var onItemWillBeAssigned = function() {
-        alert('onItemWillBeAssigned');
-        console.log(arguments);
+        console.log('skeduler :: onItemWillBeAssigned');
+        console.log(skeduler.tasks());
+        //console.log(arguments);
+    }
+
+    var onItemDidAssigned = function() {
+        console.log('skeduler :: onItemDidAssigned');
+        console.log(skeduler.tasks());
+        //console.log(arguments);
     }
 
     var populate = function(data, itemCardTemplate, cardTemplate) {
-        var skeduler = $("#skeduler-container").skeduler({
+        skeduler = $("#skeduler-container").skeduler({
+            debug: true,
             rowsPerHour: 2,
             lineHeight: 20,
             getHeader: item => item.name,
             data: data.specialists,
             tasks: data.tasks,
+            items: data.items,
             cardTemplate: cardTemplate,
-            onClick: function(e, t) { console.log(e, t); },
             itemsOptions: {
                 enabled: true,
                 containerSelector: "#skeduler-items",
                 itemCardTemplate: itemCardTemplate,
-                items: data.items,
                 matchFunc: matchFunc,
-                onItemWillBeAssigned: onItemWillBeAssigned
+                onItemWillBeAssigned: onItemWillBeAssigned,
+                onItemDidAssigned: onItemDidAssigned
             }
         });
 
