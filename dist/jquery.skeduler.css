@@ -149,6 +149,9 @@
   padding: 5px 20px;
   user-select: none;
 }
+.si-card.conflicted {
+  background-color: red;
+}
 .si-card-moving {
   position: absolute;
   z-index: 999;

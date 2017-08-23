@@ -48,6 +48,7 @@ const populateSkedulerItems = (settings) => {
     $skedulerItemsContainerEl.appendTo($skedulerItemsEl);
 
     let operation = null;
+    let $conflictedCard = null;
 
     const mouseUp = (event) => {
         if (operation == null) return;
@@ -59,6 +60,11 @@ const populateSkedulerItems = (settings) => {
         const index = parseInt($movingCard.data('index'));
         const isAssigned = !!$movingCard.data('assigned');
         const item = getItem(index, isAssigned);
+
+        if ($conflictedCard) {
+            $conflictedCard.removeClass('conflicted');
+            $conflictedCard = null;
+        }
 
         if ($skedulerItemsContainerEl.data('selected') == 1) {
             if (isAssigned) {
@@ -154,6 +160,11 @@ const populateSkedulerItems = (settings) => {
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
 
+        if ($conflictedCard) {
+            $conflictedCard.removeClass('conflicted');
+            $conflictedCard = null;
+        }
+
         $skedulerItemsContainerEl.each(function () {
             const $this = $(this);
             const elementBounding = this.getBoundingClientRect();
@@ -183,8 +194,9 @@ const populateSkedulerItems = (settings) => {
                 );
 
                 const column = +$this.data('column');
+                const itemIndex = +$this.data('item-index');
                 const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME
-                const interval = settings.data[column].availableIntervals[$this.data('item-index')];
+                const interval = settings.data[column].availableIntervals[itemIndex];
                 const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
 
                 operation.startTime = findStartTime(rowIndex, rowsPerHour, interval);
@@ -198,14 +210,20 @@ const populateSkedulerItems = (settings) => {
                 $el.data('match', +matchResult.match);
 
                 if (matchResult.match) {
-                    settings.tasks.filter(t => t.column == column).forEach(t => {
+                    settings.tasks.filter(t => t.column == column && t.item.index != index).forEach(t => {
                         const taskStart = parseTime(t.start);
                         const movingTaskStart = parseTime(operation.startTime);
 
                         if (!(taskStart >= movingTaskStart + item.duration / 60)
                             && !(taskStart + t.item.duration / 60 <= movingTaskStart)) {
-                                // TODO t is a conflicted task
-                                console.log(t.item.name);
+                            // TODO t is a conflicted task
+                            console.log(t.item.name);
+                            $this.find('.si-card').each(function () {
+                                if ($(this).data('index') == t.item.index) {
+                                    $conflictedCard = $(this);
+                                    $conflictedCard.addClass('conflicted');
+                                }
+                            })
                         }
                     });
                 }
