@@ -44,6 +44,8 @@ const defaultSettings = {
         title: 'Items',
         onItemWillBeAssigned: () => { console.log(arguments); },
         onItemDidAssigned: () => { console.log(arguments); },
+        onItemWillBeUnassigned: () => { console.log(arguments); },
+        onItemDidUnassigned: () => { console.log(arguments); },
         matchFunc: () => { return { match: true } }
     }
 };

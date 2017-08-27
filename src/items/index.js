@@ -67,9 +67,13 @@ const populateSkedulerItems = (settings) => {
         }
 
         if ($skedulerItemsContainerEl.data('selected') == 1) {
+            // Item need to be unassigned
+
             if (isAssigned) {
                 settings.tasks = settings.tasks.filter(t => t.item.index != index);
                 settings.items.push(item);
+
+                settings.itemsOptions.onItemWillBeUnassigned && settings.itemsOptions.onItemWillBeUnassigned({ item });
             }
 
             $movingCard
@@ -84,7 +88,13 @@ const populateSkedulerItems = (settings) => {
 
             $movingCard.on('mousedown', mouseDown);
             $card.remove();
+
+            if (isAssigned) {
+                settings.itemsOptions.onItemDidUnassigned && settings.itemsOptions.onItemDidUnassigned({ item });
+            }
         } else if ($siEl.length !== 0 && $siEl.data('match') == 1) {
+            // Item need to be assigned
+
             const rowHeight = settings.lineHeight + 1;
             const column = parseInt($siEl.parent().data('column'));
             let offsetInMinutes = parseTime(startTime) * 60;
@@ -92,7 +102,6 @@ const populateSkedulerItems = (settings) => {
             const interval = settings.data[column].availableIntervals[$siEl.parent().data('item-index')];
 
             settings.itemsOptions.onItemWillBeAssigned && settings.itemsOptions.onItemWillBeAssigned({ item, interval, offsetInMinutes });
-
             $movingCard
                 .detach()
                 .css({ top: $siEl[0].offsetTop, left: 0 })
@@ -114,8 +123,8 @@ const populateSkedulerItems = (settings) => {
                 });
             } else {
                 let task = settings.tasks.find(t => t.item.index === index);
-                task.start = startTime,
-                    task.column = column;
+                task.start = startTime;
+                task.column = column;
             }
 
             settings.itemsOptions.onItemDidAssigned && settings.itemsOptions.onItemDidAssigned({ item, interval, offsetInMinutes });

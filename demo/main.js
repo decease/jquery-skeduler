@@ -43,6 +43,18 @@ $(function() {
         //console.log(arguments);
     }
 
+    var onItemWillBeUnassigned = function() {
+        console.log('skeduler :: onItemWillBeUnassigned');
+        console.log(skeduler.tasks());
+        //console.log(arguments);
+    }
+
+    var onItemDidUnassigned = function() {
+        console.log('skeduler :: onItemDidUnassigned');
+        console.log(skeduler.tasks());
+        //console.log(arguments);
+    }
+
     var populate = function(data, itemCardTemplate, cardTemplate) {
         skeduler = $("#skeduler-container").skeduler({
             debug: true,
@@ -59,7 +71,9 @@ $(function() {
                 itemCardTemplate: itemCardTemplate,
                 matchFunc: matchFunc,
                 onItemWillBeAssigned: onItemWillBeAssigned,
-                onItemDidAssigned: onItemDidAssigned
+                onItemDidAssigned: onItemDidAssigned,
+                onItemWillBeUnassigned: onItemWillBeUnassigned,
+                onItemDidUnassigned: onItemDidUnassigned
             }
         });
 
