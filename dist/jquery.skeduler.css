@@ -148,9 +148,11 @@
   margin: 10px 10px;
   padding: 5px 20px;
   user-select: none;
+  border: 1px solid #acd9ac;
 }
 .si-card.conflicted {
-  background-color: red;
+  background-color: #ee5050;
+  border: 1px solid #030303;
 }
 .si-card-moving {
   position: absolute;

@@ -48,7 +48,8 @@ const populateSkedulerItems = (settings) => {
     $skedulerItemsContainerEl.appendTo($skedulerItemsEl);
 
     let operation = null;
-    let $conflictedCard = null;
+    let conflictedTasks = [];
+    //let $conflictedCards = [];
 
     const mouseUp = (event) => {
         if (operation == null) return;
@@ -60,11 +61,6 @@ const populateSkedulerItems = (settings) => {
         const index = parseInt($movingCard.data('index'));
         const isAssigned = !!$movingCard.data('assigned');
         const item = getItem(index, isAssigned);
-
-        if ($conflictedCard) {
-            $conflictedCard.removeClass('conflicted');
-            $conflictedCard = null;
-        }
 
         if ($skedulerItemsContainerEl.data('selected') == 1) {
             // Item need to be unassigned
@@ -93,8 +89,8 @@ const populateSkedulerItems = (settings) => {
                 settings.itemsOptions.onItemDidUnassigned && settings.itemsOptions.onItemDidUnassigned({ item });
             }
         } else if ($siEl.length !== 0 && $siEl.data('match') == 1) {
-            // Item need to be assigned
 
+            // Item need to be assigned
             const rowHeight = settings.lineHeight + 1;
             const column = parseInt($siEl.parent().data('column'));
             let offsetInMinutes = parseTime(startTime) * 60;
@@ -102,7 +98,7 @@ const populateSkedulerItems = (settings) => {
             const interval = settings.data[column].availableIntervals[$siEl.parent().data('item-index')];
 
             settings.itemsOptions.onItemWillBeAssigned && settings.itemsOptions.onItemWillBeAssigned({ item, interval, offsetInMinutes });
-            $movingCard
+            const $el = $movingCard
                 .detach()
                 .css({ top: $siEl[0].offsetTop, left: 0 })
                 .height($siEl[0].clientHeight)
@@ -117,6 +113,7 @@ const populateSkedulerItems = (settings) => {
 
             if (!isAssigned) {
                 settings.tasks.push({
+                    $el,
                     column,
                     start: startTime,
                     item
@@ -125,12 +122,17 @@ const populateSkedulerItems = (settings) => {
                 let task = settings.tasks.find(t => t.item.index === index);
                 task.start = startTime;
                 task.column = column;
+                task.$el = $el;
             }
 
             settings.itemsOptions.onItemDidAssigned && settings.itemsOptions.onItemDidAssigned({ item, interval, offsetInMinutes });
         } else {
             $movingCard.remove();
             $card.show();
+
+            // Porcess conflictedTasks
+            $('.conflicted').removeClass('conflicted');
+            conflictedTasks = conflictedTasks.filter(p => p.f != index && p.s != index);
         }
 
         $('.' + settings.itemsOptions.highlightItemCss).hide();
@@ -169,11 +171,6 @@ const populateSkedulerItems = (settings) => {
         const duration = item.duration;
         const height = duration * (rowHeight * rowsPerHour / 60);
 
-        if ($conflictedCard) {
-            $conflictedCard.removeClass('conflicted');
-            $conflictedCard = null;
-        }
-
         $skedulerItemsContainerEl.each(function () {
             const $this = $(this);
             const elementBounding = this.getBoundingClientRect();
@@ -187,10 +184,11 @@ const populateSkedulerItems = (settings) => {
                 $skedulerItemsContainerEl.data('selected', 0);
             }
         });
+
         $shifts.each(function () {
-            const $this = $(this);
+            const $shift = $(this);
             const elementBounding = this.getBoundingClientRect();
-            const $el = $this.find('.' + settings.itemsOptions.highlightItemCss);
+            const $matchingAreaEl = $shift.find('.' + settings.itemsOptions.highlightItemCss);
 
             if (x > elementBounding.left && x < elementBounding.right &&
                 y > elementBounding.top && y < elementBounding.bottom) {
@@ -202,43 +200,65 @@ const populateSkedulerItems = (settings) => {
                     this.clientHeight - height
                 );
 
-                const column = +$this.data('column');
-                const itemIndex = +$this.data('item-index');
+                const column = +$shift.data('column');
+                const itemIndex = +$shift.data('item-index');
                 const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME
                 const interval = settings.data[column].availableIntervals[itemIndex];
                 const matchResult = settings.itemsOptions.matchFunc(item, interval, offsetInMinutes);
 
                 operation.startTime = findStartTime(rowIndex, rowsPerHour, interval);
 
-                $el.css({ top: top })
+                $matchingAreaEl.css({ top: top })
                     .css('background-color', matchResult.color)
                     .height(height)
                     .show();
 
-
-                $el.data('match', +matchResult.match);
+                $matchingAreaEl.data('match', +matchResult.match);
 
                 if (matchResult.match) {
                     settings.tasks.filter(t => t.column == column && t.item.index != index).forEach(t => {
                         const taskStart = parseTime(t.start);
                         const movingTaskStart = parseTime(operation.startTime);
+                        const $cardByIndex = t.$el;
 
+                        // if moving card are conflict with some assigned card in the current shift
+                        let conflictedTaskPair = conflictedTasks.find(p => p.f == index && p.s == t.item.index || p.s == index && p.f == t.item.index);
                         if (!(taskStart >= movingTaskStart + item.duration / 60)
                             && !(taskStart + t.item.duration / 60 <= movingTaskStart)) {
-                            // TODO t is a conflicted task
-                            console.log(t.item.name);
-                            $this.find('.si-card').each(function () {
-                                if ($(this).data('index') == t.item.index) {
-                                    $conflictedCard = $(this);
-                                    $conflictedCard.addClass('conflicted');
-                                }
-                            })
+
+                            if (!conflictedTaskPair) {
+                                conflictedTasks.push({ f: index, s: t.item.index });
+                            }
+                        } else {
+                            if (conflictedTaskPair) {
+                                conflictedTasks = conflictedTasks.filter(p => p.f != conflictedTaskPair.f && p.s != conflictedTaskPair.s);
+                            }
                         }
                     });
                 }
             } else {
-                $el.data('match', 0);
-                $el.hide();
+                $matchingAreaEl.data('match', 0);
+                $matchingAreaEl.hide();
+            }
+        });
+
+        // Porcess conflictedTasks
+        $('.conflicted').removeClass('conflicted');
+        conflictedTasks.forEach(p => {
+            let f = settings.tasks.find(t => t.item.index == p.f);
+            let s = settings.tasks.find(t => t.item.index == p.s);
+
+            if (f) {
+                f.$el.addClass('conflicted');
+            }
+            if (s) {
+                s.$el.addClass('conflicted');
+            }
+
+            console.log(index, p.f, p.s, f, s);
+
+            if (p.f == index || p.s == index) {
+                $movingCard.addClass('conflicted');
             }
         });
     };

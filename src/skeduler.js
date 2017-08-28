@@ -189,7 +189,7 @@ class Skeduler {
             let top = this.getCardTopPosition(task.start, intervalStart);
             let height = this.getCardHeight(task.item.duration / 60);
 
-            this.getItemDiv(task.item)
+            task.$el = this.getItemDiv(task.item)
                 .attr({
                     style: 'top: ' + top + 'px; height: ' + height + 'px'
                 })
