@@ -49,7 +49,6 @@ const populateSkedulerItems = (settings) => {
 
     let operation = null;
     let conflictedTasks = [];
-    //let $conflictedCards = [];
 
     const mouseUp = (event) => {
         if (operation == null) return;
@@ -133,6 +132,23 @@ const populateSkedulerItems = (settings) => {
             // Porcess conflictedTasks
             $('.conflicted').removeClass('conflicted');
             conflictedTasks = conflictedTasks.filter(p => p.f != index && p.s != index);
+            conflictedTasks.forEach(p => {
+                let f = settings.tasks.find(t => t.item.index == p.f);
+                let s = settings.tasks.find(t => t.item.index == p.s);
+
+                if (f) {
+                    f.$el.addClass('conflicted');
+                }
+                if (s) {
+                    s.$el.addClass('conflicted');
+                }
+
+                console.log(index, p.f, p.s, f, s);
+
+                if (p.f == index || p.s == index) {
+                    $movingCard.addClass('conflicted');
+                }
+            });
         }
 
         $('.' + settings.itemsOptions.highlightItemCss).hide();
@@ -214,31 +230,32 @@ const populateSkedulerItems = (settings) => {
                     .show();
 
                 $matchingAreaEl.data('match', +matchResult.match);
-
-                if (matchResult.match) {
-                    settings.tasks.filter(t => t.column == column && t.item.index != index).forEach(t => {
-                        const taskStart = parseTime(t.start);
-                        const movingTaskStart = parseTime(operation.startTime);
-                        const $cardByIndex = t.$el;
-
-                        // if moving card are conflict with some assigned card in the current shift
-                        let conflictedTaskPair = conflictedTasks.find(p => p.f == index && p.s == t.item.index || p.s == index && p.f == t.item.index);
-                        if (!(taskStart >= movingTaskStart + item.duration / 60)
-                            && !(taskStart + t.item.duration / 60 <= movingTaskStart)) {
-
-                            if (!conflictedTaskPair) {
-                                conflictedTasks.push({ f: index, s: t.item.index });
-                            }
-                        } else {
-                            if (conflictedTaskPair) {
-                                conflictedTasks = conflictedTasks.filter(p => p.f != conflictedTaskPair.f && p.s != conflictedTaskPair.s);
-                            }
-                        }
-                    });
-                }
             } else {
                 $matchingAreaEl.data('match', 0);
                 $matchingAreaEl.hide();
+            }
+        });
+
+        settings.tasks.filter(t => t.item.index != index).forEach(t => {
+            const taskStart = parseTime(t.start);
+            const movingTaskStart = parseTime(operation.startTime);
+            const $cardByIndex = t.$el;
+
+            // TODO: check column
+
+            // if moving card are conflict with some assigned card in the current shift
+            let conflictedTaskPair = conflictedTasks.find(p =>
+                p.f == index && p.s == t.item.index || p.s == index && p.f == t.item.index);
+            if (!(taskStart >= movingTaskStart + item.duration / 60)
+                && !(taskStart + t.item.duration / 60 <= movingTaskStart)) {
+
+                if (!conflictedTaskPair) {
+                    conflictedTasks.push({ f: index, s: t.item.index });
+                }
+            } else {
+                if (conflictedTaskPair) {
+                    conflictedTasks = conflictedTasks.filter(p => p.f != conflictedTaskPair.f && p.s != conflictedTaskPair.s);
+                }
             }
         });
 
