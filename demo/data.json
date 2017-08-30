@@ -39,7 +39,7 @@
     ],
     "tasks": [
         {
-            "column": 0,
+            "column": 4,
             "start": "10:00",
             "item": {
                 "name": "Liza March",

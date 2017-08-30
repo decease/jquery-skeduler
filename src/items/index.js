@@ -136,14 +136,8 @@ const populateSkedulerItems = (settings) => {
                 let f = settings.tasks.find(t => t.item.index == p.f);
                 let s = settings.tasks.find(t => t.item.index == p.s);
 
-                if (f) {
-                    f.$el.addClass('conflicted');
-                }
-                if (s) {
-                    s.$el.addClass('conflicted');
-                }
-
-                console.log(index, p.f, p.s, f, s);
+                f && f.$el.addClass('conflicted');
+                s && s.$el.addClass('conflicted');
 
                 if (p.f == index || p.s == index) {
                     $movingCard.addClass('conflicted');
@@ -201,6 +195,7 @@ const populateSkedulerItems = (settings) => {
             }
         });
 
+        let column = null;
         $shifts.each(function () {
             const $shift = $(this);
             const elementBounding = this.getBoundingClientRect();
@@ -216,7 +211,7 @@ const populateSkedulerItems = (settings) => {
                     this.clientHeight - height
                 );
 
-                const column = +$shift.data('column');
+                column = +$shift.data('column');
                 const itemIndex = +$shift.data('item-index');
                 const offsetInMinutes = 60 / settings.rowsPerHour * (top / rowHeight); // <<== FIXME
                 const interval = settings.data[column].availableIntervals[itemIndex];
@@ -241,12 +236,10 @@ const populateSkedulerItems = (settings) => {
             const movingTaskStart = parseTime(operation.startTime);
             const $cardByIndex = t.$el;
 
-            // TODO: check column
-
             // if moving card are conflict with some assigned card in the current shift
             let conflictedTaskPair = conflictedTasks.find(p =>
                 p.f == index && p.s == t.item.index || p.s == index && p.f == t.item.index);
-            if (!(taskStart >= movingTaskStart + item.duration / 60)
+            if (column !== null && t.column === column && !(taskStart >= movingTaskStart + item.duration / 60)
                 && !(taskStart + t.item.duration / 60 <= movingTaskStart)) {
 
                 if (!conflictedTaskPair) {
@@ -265,16 +258,10 @@ const populateSkedulerItems = (settings) => {
             let f = settings.tasks.find(t => t.item.index == p.f);
             let s = settings.tasks.find(t => t.item.index == p.s);
 
-            if (f) {
-                f.$el.addClass('conflicted');
-            }
-            if (s) {
-                s.$el.addClass('conflicted');
-            }
+            f && f.$el.addClass('conflicted');
+            s && s.$el.addClass('conflicted');
 
-            console.log(index, p.f, p.s, f, s);
-
-            if (p.f == index || p.s == index) {
+            if (p.f === index || p.s === index) {
                 $movingCard.addClass('conflicted');
             }
         });
