@@ -55,7 +55,7 @@ $(function() {
         //console.log(arguments);
     }
 
-    var populate = function(data, itemCardTemplate, cardTemplate) {
+    var populate = function(data, shiftTemplate, itemCardTemplate, cardTemplate) {
         skeduler = $("#skeduler-container").skeduler({
             debug: true,
             rowsPerHour: 2,
@@ -69,6 +69,7 @@ $(function() {
                 enabled: true,
                 containerSelector: "#skeduler-items",
                 itemCardTemplate: itemCardTemplate,
+                shiftTemplate: shiftTemplate,
                 matchFunc: matchFunc,
                 onItemWillBeAssigned: onItemWillBeAssigned,
                 onItemDidAssigned: onItemDidAssigned,
@@ -86,9 +87,15 @@ $(function() {
         }
     };
 
-    var cardTemplateLoaded = function(itemCardTemplate, cardTemplate) {
+    var shiftTemplateLoaded = function(shiftTemplate, itemCardTemplate, cardTemplate) {
         $.getJSON('demo/data.json', function(data) {
-            populate(data, itemCardTemplate, cardTemplate);
+            populate(data, shiftTemplate, itemCardTemplate, cardTemplate);
+        });
+    };
+
+    var cardTemplateLoaded = function(itemCardTemplate, cardTemplate) {
+        $.get('demo/shift-template.html', function(shiftTemplate) {
+            shiftTemplateLoaded(shiftTemplate, itemCardTemplate, cardTemplate);
         });
     };
 

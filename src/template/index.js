@@ -1,6 +1,6 @@
 const compileTemplate = (template, funcs) => item => {
     let result = template;
-    const regKeys = /\$\{(\w+)\}/g;
+    const regKeys = /\$\{([\w\.]+)\}/g;
     const regFuncs = /\$\{(\w+)\(\)\}/g;
 
     let match = 1;
@@ -9,7 +9,10 @@ const compileTemplate = (template, funcs) => item => {
         if (!match) break;
 
         let key = match[1];
-        if (item.hasOwnProperty(key)) {
+        if (key.indexOf('.') != -1) {
+            // TODO: Increase depth
+            result = result.replace(match[0], item[key.split('.')[0]][key.split('.')[1]]);
+        } else if (item.hasOwnProperty(key)) {
             result = result.replace(match[0], item[key]);
         }
     }

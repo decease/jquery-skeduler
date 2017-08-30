@@ -142,6 +142,13 @@
   background: #bce8f1;
   opacity: .3;
 }
+.si-shift {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
 .si-card {
   cursor: move;
   background-color: #aad8aa;
