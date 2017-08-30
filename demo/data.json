@@ -39,7 +39,7 @@
     ],
     "tasks": [
         {
-            "column": 0,
+            "column": 4,
             "start": "10:00",
             "item": {
                 "name": "Liza March",
@@ -70,7 +70,7 @@
             "availableIntervals": [
                 {
                     "start": "8:30",
-                    "end": "12:00"
+                    "end": "12:30"
                 },
                 {
                     "start": "13:30",

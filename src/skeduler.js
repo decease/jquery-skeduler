@@ -37,11 +37,11 @@ class Skeduler {
 
     refresh() {
         this.settings.items = this.settings.items && this.settings.items.map(
-            (item, index) => Object.assign({}, {index}, item)
+            (item, index) => Object.assign({}, { index }, item)
         ) || [];
         this.settings.tasks = this.settings.tasks && this.settings.tasks.map(
             (task, index) => {
-                task.item = Object.assign({}, {index: index + this.settings.items.length}, task.item);
+                task.item = Object.assign({}, { index: index + this.settings.items.length }, task.item);
                 return task;
             }
         ) || [];
@@ -152,8 +152,10 @@ class Skeduler {
     }
 
     appendAvailableInterval(placeholder, intervals, column) {
+        const template = compileTemplate(this.settings.itemsOptions.shiftTemplate);
         intervals.forEach((interval, index) => {
-            const innerContent = div().text(this.settings.notAllocatedLabel);
+            const innerContent = div(this.settings.itemsOptions.shiftDivCssClass)
+                .html(template({ interval, column }));
             const top = this.getCardTopPosition(interval.start) + 2;
             const duration = parseTime(interval.end) - parseTime(interval.start);
             const height = this.getCardHeight(duration) - 5;
@@ -189,7 +191,7 @@ class Skeduler {
             let top = this.getCardTopPosition(task.start, intervalStart);
             let height = this.getCardHeight(task.item.duration / 60);
 
-            this.getItemDiv(task.item)
+            task.$el = this.getItemDiv(task.item)
                 .attr({
                     style: 'top: ' + top + 'px; height: ' + height + 'px'
                 })

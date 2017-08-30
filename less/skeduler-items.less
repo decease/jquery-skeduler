@@ -22,6 +22,14 @@
     }
 }
 
+.si-shift {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
 .si-card {
     cursor: move;
     background-color: #aad8aa;
@@ -29,6 +37,12 @@
     margin: 10px 10px;
     padding: 5px 20px;
     user-select: none;
+    border: 1px solid #acd9ac;
+
+    &.conflicted {
+        background-color: #ee5050;
+        border: 1px solid #030303;
+    }
 }
 
 .si-card-moving {

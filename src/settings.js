@@ -6,8 +6,6 @@ const defaultSettings = {
 
     items: [],      // Item[] - Array of not-assingned tasks
 
-    notAllocatedLabel: 'Not allocated',
-
     // Card template - Inner content of task card. 
     // You're able to use ${key} inside template, where key is any property from task.
     cardTemplate: '<div>${id}</div>',
@@ -41,9 +39,13 @@ const defaultSettings = {
         containerSelector: "#skeduler-items",
         itemCardCssClass: 'si-card',
         itemCardTemplate: '<div>${duration}</div>',
+        shiftDivCssClass: 'si-shift',
+        shiftTemplate: '<div>Not Allocated</div>',
         title: 'Items',
         onItemWillBeAssigned: () => { console.log(arguments); },
         onItemDidAssigned: () => { console.log(arguments); },
+        onItemWillBeUnassigned: () => { console.log(arguments); },
+        onItemDidUnassigned: () => { console.log(arguments); },
         matchFunc: () => { return { match: true } }
     }
 };
