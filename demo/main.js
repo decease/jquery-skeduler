@@ -60,7 +60,7 @@ $(function() {
             debug: true,
             rowsPerHour: 2,
             lineHeight: 20,
-            getHeader: item => item.name,
+            getHeader: function (item) { return item.name },
             data: data.specialists,
             tasks: data.tasks,
             items: data.items,
