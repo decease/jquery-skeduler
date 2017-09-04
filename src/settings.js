@@ -6,10 +6,6 @@ const defaultSettings = {
 
     items: [],      // Item[] - Array of not-assingned tasks
 
-    // Card template - Inner content of task card. 
-    // You're able to use ${key} inside template, where key is any property from task.
-    cardTemplate: '<div>${id}</div>',
-
     // Css classes
     skedulerWrapperCssClass: 'skeduler-wrapper',
     containerCssClass: 'skeduler-container',

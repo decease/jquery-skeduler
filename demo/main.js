@@ -55,7 +55,7 @@ $(function() {
         //console.log(arguments);
     }
 
-    var populate = function(data, shiftTemplate, itemCardTemplate, cardTemplate) {
+    var populate = function(data, shiftTemplate, itemCardTemplate) {
         skeduler = $("#skeduler-container").skeduler({
             debug: true,
             rowsPerHour: 2,
@@ -64,7 +64,6 @@ $(function() {
             data: data.specialists,
             tasks: data.tasks,
             items: data.items,
-            cardTemplate: cardTemplate,
             itemsOptions: {
                 enabled: true,
                 containerSelector: "#skeduler-items",
@@ -87,23 +86,17 @@ $(function() {
         }
     };
 
-    var shiftTemplateLoaded = function(shiftTemplate, itemCardTemplate, cardTemplate) {
+    var shiftTemplateLoaded = function(shiftTemplate, itemCardTemplate) {
         $.getJSON('demo/data.json', function(data) {
-            populate(data, shiftTemplate, itemCardTemplate, cardTemplate);
+            populate(data, shiftTemplate, itemCardTemplate);
         });
     };
 
-    var cardTemplateLoaded = function(itemCardTemplate, cardTemplate) {
+    var cardTemplateLoaded = function(itemCardTemplate) {
         $.get('demo/shift-template.html', function(shiftTemplate) {
-            shiftTemplateLoaded(shiftTemplate, itemCardTemplate, cardTemplate);
+            shiftTemplateLoaded(shiftTemplate, itemCardTemplate);
         });
     };
 
-    var itemCardTemplateLoaded = function(itemCardTemplate) {
-        $.get('demo/card-template.html', function(cardTemplate) {
-            cardTemplateLoaded(itemCardTemplate, cardTemplate);
-        });
-    };
-
-    $.get('demo/item-card-template.html', itemCardTemplateLoaded);
+    $.get('demo/item-card-template.html', cardTemplateLoaded);
 });
