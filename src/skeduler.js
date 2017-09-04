@@ -261,7 +261,7 @@ class Skeduler {
         };
 
         this.$ownerDocument.on('mousemove', this.onResizePointerMove.bind(this));
-        this.$ownerDocument.on('mouseup', this.Resize.bind(this));
+        this.$ownerDocument.on('mouseup', this.onResizePointerUp.bind(this));
 
         event.preventDefault();
     }
