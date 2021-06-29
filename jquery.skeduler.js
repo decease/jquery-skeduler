@@ -22,6 +22,9 @@
     lineHeight: 30,      // height of one half-hour line in grid
     borderWidth: 1,      // width of board of grid cell
 
+    timelineStart: 0,     //When should the timeline start?
+    timelineStop: 24,     //When should the timeline end?
+
     debug: false
   };
   var settings = {};
@@ -46,7 +49,8 @@
    * startTime - in hours
    */
   function getCardTopPosition(startTime) {
-    return (settings.lineHeight + settings.borderWidth) * (startTime * 2);
+    //return (settings.lineHeight + settings.borderWidth) * (startTime * 2);
+    return ((settings.lineHeight + settings.borderWidth) * (startTime * 2)) - ((settings.lineHeight + settings.borderWidth)*settings.timelineStart*2);
   }
 
   /**
@@ -116,7 +120,7 @@
       );
 
     for (var i = 0; i < args.args.length; i++) {
-      var width = 194 / (args.args[i] || 1);
+      var width = 194 / (+args.args[i] || 1);
 
       tasks[i].width = width;
       tasks[i].left = (args.indexes[i] * width) || 4;
@@ -179,7 +183,7 @@
 
     var gridColumnElement = div.clone();
 
-    for (var i = 0; i < 24; i++) {
+    for (var i = settings.timelineStart; i < settings.timelineStop; i++) {
       // Populate timeline
       div.clone()
         .text(toTimeString(i))
